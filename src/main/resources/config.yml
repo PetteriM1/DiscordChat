@@ -1,0 +1,26 @@
+# bot token
+botToken: ""
+
+# discord server id
+serverId: ""
+
+# server chat channel id
+channelId: ""
+
+# for bot: Playing _________
+botStatus: "Minecraft"
+
+# enable !playerlist command on discord
+playerListCommand: true
+
+# enable debug
+debug: false
+
+# enable join messages to discord
+joinMessages: true
+
+# enable quit messages to discord
+quitMessages: true
+
+# enable death messages to discord
+deathMessages: true
