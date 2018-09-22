@@ -3,6 +3,7 @@ package discordchat;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
@@ -26,6 +27,11 @@ public class PlayerListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         String msg = TextFormat.clean(textFromContainer(e.getDeathMessage()));
         if (Main.jda != null && Main.config.getBoolean("deathMessages")) Main.channel.sendMessage("**:skull: " + msg + "**").queue();
+    }
+
+    @EventHandler
+    public void onChat(PlayerChatEvent e) {
+        if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(e.getPlayer().getName() + " » " + e.getMessage()).queue();
     }
 
     private String textFromContainer(TextContainer container){
