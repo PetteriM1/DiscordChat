@@ -3,3 +3,5 @@ main: discordchat.Main
 version: "${pom.version}"
 api: ["1.0.0"]
 author: PetteriM1
+description: Sync discord chat with your server
+website: https://nukkitx.com/resources/discordchat.137/

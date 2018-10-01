@@ -1,26 +1,33 @@
 # bot token
 botToken: ""
-
 # discord server id
 serverId: ""
-
-# server chat channel id
+# discord server chat channel id
 channelId: ""
-
-# for bot: Playing _________
-botStatus: "Minecraft"
-
-# enable !playerlist command on discord
-playerListCommand: true
 
 # enable debug
 debug: false
 
+# enable bot status
+# Playing _________
+enableBotStatus: true
+botStatus: "Minecraft"
+
+# enable !playerlist command on discord
+playerListCommand: true
+# enable !ip command on discord
+ipCommand: true
+serverIp: "play.example.com"
+serverPort: "19132"
+
 # enable join messages to discord
 joinMessages: true
-
 # enable quit messages to discord
 quitMessages: true
-
 # enable death messages to discord
 deathMessages: true
+
+# discord messages to minecraft
+enableDiscordToMinecraft: true
+# minecraft messages to discord
+enableMinecraftToDiscord: true

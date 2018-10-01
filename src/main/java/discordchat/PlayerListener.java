@@ -31,12 +31,13 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onChat(PlayerChatEvent e) {
+        if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
         if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(e.getPlayer().getName() + " » " + e.getMessage()).queue();
     }
 
-    private String textFromContainer(TextContainer container){
-        if (container instanceof TranslationContainer){
-            return Server.getInstance().getLanguage().translateString(container.getText(), ((TranslationContainer)container).getParameters());
+    private String textFromContainer(TextContainer container) {
+        if (container instanceof TranslationContainer) {
+            return Server.getInstance().getLanguage().translateString(container.getText(), ((TranslationContainer) container).getParameters());
         } else {
             return container.getText();
         }
