@@ -31,3 +31,6 @@ deathMessages: true
 enableDiscordToMinecraft: true
 # minecraft messages to discord
 enableMinecraftToDiscord: true
+
+# enable if you host your server on windows computer to prevent Â in messages
+windowsHost: true
