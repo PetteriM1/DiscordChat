@@ -52,7 +52,9 @@ public class DiscordListener extends ListenerAdapter {
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
         if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;
-        for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage("\u00A7f[\u00A7bDiscord" + role + "\u00A7f] " + e.getMember().getEffectiveName() + " » " + message);
+        String u00BB = " » ";
+        if (Main.config.getBoolean("windowsHost")) u00BB = " \u00BB ";
+        for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage("\u00A7f[\u00A7bDiscord" + role + "\u00A7f] " + e.getMember().getEffectiveName() + u00BB + message);
     }
 
      private boolean processPlayerListCommand(GuildMessageReceivedEvent e, String message) {
