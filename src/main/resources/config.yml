@@ -26,6 +26,10 @@ joinMessages: true
 quitMessages: true
 # enable death messages to discord
 deathMessages: true
+# enable server start messages to discord
+startMessages: true
+# enable server stop messages to discord
+stopMessages: true
 
 # discord messages to minecraft
 enableDiscordToMinecraft: true

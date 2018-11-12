@@ -21,9 +21,10 @@ public class Main extends PluginBase {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         config = getConfig();
         debug = config.getBoolean("debug", true);
+        if (debug) getServer().getLogger().info("Registering events for PlayerListener");
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
             if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "\u00A7cnull"));
             jda = new JDABuilder(AccountType.BOT).setToken(config.getString("botToken")).buildBlocking();
@@ -34,8 +35,16 @@ public class Main extends PluginBase {
             jda.addEventListener(new DiscordListener());
             jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, config.getString("botStatus")));
         } catch (Exception e) {
-            getLogger().error("Couldn't enable discord chat sync");
+            getLogger().error("Couldn't enable Discord chat sync");
             if (debug) e.printStackTrace();
         }
+        if (jda != null && config.getBoolean("startMessages")) channel.sendMessage("**:white_check_mark: Server started!**").queue();
+        if (debug) getServer().getLogger().info("Startup done successfully");
+    }
+
+    @Override
+    public void onDisable() {
+        if (jda != null && config.getBoolean("stopMessages")) channel.sendMessage("**:x: Server stopped!**").queue();
+        if (debug) getServer().getLogger().info("Disabling the plugin");
     }
 }
