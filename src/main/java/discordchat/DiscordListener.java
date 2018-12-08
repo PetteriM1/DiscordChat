@@ -48,7 +48,6 @@ public class DiscordListener extends ListenerAdapter {
         String message = e.getMessage().getContentStripped();
         if (message.length() == 0 && e.getMessage().getAttachments().size() == 0) return;
         if (processPlayerListCommand(e, message)) return;
-        if (message.contains("ঋ") || message.contains("ༀ") || message.contains("")) return;
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
         if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;

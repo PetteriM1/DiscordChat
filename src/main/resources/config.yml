@@ -13,6 +13,9 @@ debug: false
 enableBotStatus: true
 botStatus: "Minecraft"
 
+# set text channel topic if it is empty
+channelTopic: "Powered by DiscordChat for Nukkit"
+
 # enable !playerlist command on discord
 playerListCommand: true
 # enable !ip command on discord
@@ -38,3 +41,6 @@ enableMinecraftToDiscord: true
 
 # enable if you see Â in messages
 windowsHost: false
+
+# enable anti spam
+antiSpam: true

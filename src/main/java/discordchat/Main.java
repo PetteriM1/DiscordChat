@@ -32,8 +32,14 @@ public class Main extends PluginBase {
             server = jda.getGuildById(config.getString("serverId"));
             if (debug) getServer().getLogger().info("Set server channel id to " + config.getString("channelId", "\u00A7cnull"));
             channel = jda.getTextChannelById(config.getString("channelId"));
+            if (debug) getServer().getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordListener());
+            if (debug) getServer().getLogger().info("Set bot status to " + config.getString("botStatus"));
             jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, config.getString("botStatus")));
+            if (debug) getServer().getLogger().info("Set channel topic to " + config.getString("channelTopic"));
+            if (channel.getTopic().isEmpty()) channel.getManager().setTopic(config.getString("channelTopic"));
+            if (debug && jda.getGuilds().size() == 0) getServer().getLogger().warning("Your Discord bot is not in any guilds");
+            if (debug) getServer().getLogger().info("JDA startup done");
         } catch (Exception e) {
             getLogger().error("Couldn't enable Discord chat sync");
             if (debug) e.printStackTrace();
