@@ -65,7 +65,7 @@ public class DiscordListener extends ListenerAdapter {
                 String playerlistMessage = "";
                 playerlistMessage += "**Online players (" + Server.getInstance().getOnlinePlayers().size() + "/" + Server.getInstance().getMaxPlayers() + "):**";
                 playerlistMessage += "\n```\n";
-                StringJoiner players = new StringJoiner(",");
+                StringJoiner players = new StringJoiner(", ");
                 for (Player player : Server.getInstance().getOnlinePlayers().values()) {
                     players.add(player.getName());
                 }
