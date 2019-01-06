@@ -13,6 +13,7 @@ import java.util.StringJoiner;
 
 public class DiscordListener extends ListenerAdapter {
 
+    @SuppressWarnings("serial")
     Map<String, String> colors = new HashMap<String, String>()
     {
         {
