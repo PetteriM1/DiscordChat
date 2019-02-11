@@ -5,42 +5,68 @@ serverId: ""
 # discord server chat channel id
 channelId: ""
 
+
 # enable debug
 debug: false
 
+
 # enable bot status
-# Playing _________
 enableBotStatus: true
+# Playing _________
 botStatus: "Minecraft"
+
 
 # set text channel topic if it is empty
 channelTopic: "Powered by DiscordChat for Nukkit"
 
-# enable !playerlist command on discord
+
+# enable !playerlist command on Discord
 playerListCommand: true
-# enable !ip command on discord
+# enable !ip command on Discord
 ipCommand: true
+# server address to show in !ip command
 serverIp: "play.example.com"
+# server port to show in !ip command
 serverPort: "19132"
 
-# enable join messages to discord
+
+# enable join messages to Discord
 joinMessages: true
-# enable quit messages to discord
+# enable quit messages to Discord
 quitMessages: true
-# enable death messages to discord
+# enable death messages to Discord
 deathMessages: true
-# enable server start messages to discord
+# enable server start messages to Discord
 startMessages: true
-# enable server stop messages to discord
+# enable server stop messages to Discord
 stopMessages: true
 
-# discord messages to minecraft
+
+# enable Discord messages to Minecraft
 enableDiscordToMinecraft: true
-# minecraft messages to discord
+# enable Minecraft messages to Discord
 enableMinecraftToDiscord: true
 
-# enable if you see Â in messages
-windowsHost: false
 
-# enable anti spam
-antiSpam: true
+# enable Discord console
+discordConsole: false
+# discord server console channel id
+consoleChannelId: ""
+
+
+# formatting of Discord messages shown in game
+discordToMinecraftChatFormatting: ""
+# formatting of game messages shown in Discord
+minecraftToDiscordChatFormatting: ""
+
+
+# translations
+status_server_started: "**:white_check_mark: Server started!**"
+status_server_stopped: "**:x: Server stopped!**"
+info_player_joined: ""
+info_player_left: ""
+info_player_death: ""
+command_playerlist_empty: ""
+command_playerlist_players: ""
+commands_ip_address: ""
+commands_ip_port: ""

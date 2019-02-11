@@ -32,9 +32,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onChat(PlayerChatEvent e) {
         if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
-        String u00BB = " » ";
-        if (Main.config.getBoolean("windowsHost")) u00BB = " \u00BB ";
-        if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(e.getPlayer().getName() + u00BB + e.getMessage()).queue();
+        if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(e.getPlayer().getName() + " \u00BB " + e.getMessage()).queue();
     }
 
     private String textFromContainer(TextContainer container) {

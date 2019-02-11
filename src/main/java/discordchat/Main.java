@@ -22,7 +22,7 @@ public class Main extends PluginBase {
     public void onEnable() {
         saveDefaultConfig();
         config = getConfig();
-        debug = config.getBoolean("debug", true);
+        debug = config.getBoolean("debug");
         if (debug) getServer().getLogger().info("Registering events for PlayerListener");
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
@@ -34,6 +34,10 @@ public class Main extends PluginBase {
             channel = jda.getTextChannelById(config.getString("channelId"));
             if (debug) getServer().getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordListener());
+            if (config.getBoolean("discordConsole")) {
+                jda.addEventListener(new DiscordConsole());
+                if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
+            }
             if (debug) getServer().getLogger().info("Set bot status to " + config.getString("botStatus"));
             jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, config.getString("botStatus")));
             if (debug) getServer().getLogger().info("Set channel topic to " + config.getString("channelTopic"));
@@ -44,13 +48,13 @@ public class Main extends PluginBase {
             getLogger().error("Couldn't enable Discord chat sync");
             if (debug) e.printStackTrace();
         }
-        if (jda != null && config.getBoolean("startMessages")) channel.sendMessage("**:white_check_mark: Server started!**").queue();
+        if (jda != null && config.getBoolean("startMessages")) channel.sendMessage(config.getString("status_server_started")).queue();
         if (debug) getServer().getLogger().info("Startup done successfully");
     }
 
     @Override
     public void onDisable() {
-        if (jda != null && config.getBoolean("stopMessages")) channel.sendMessage("**:x: Server stopped!**").queue();
+        if (jda != null && config.getBoolean("stopMessages")) channel.sendMessage(config.getString("status_server_stopped")).queue();
         if (debug) getServer().getLogger().info("Disabling the plugin");
     }
 }
