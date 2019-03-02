@@ -16,27 +16,23 @@ public class DiscordListener extends ListenerAdapter {
     Map<String, String> colors = new HashMap<String, String>()
     {
         {
-            put("99AAB5", "\u00A7f");
-            put("1ABC9C", "\u00A7a");
-            put("2ECC71", "\u00A7a");
-            put("3498DB", "\u00A73");
-            put("9B59B6", "\u00A75");
-            put("E91E63", "\u00A7d");
-            put("F1C40F", "\u00A7e");
-            put("E67E22", "\u00A76");
-            put("E74C3C", "\u00A7c");
-            put("95A5A6", "\u00A77");
-            put("607D8B", "\u00A78");
-            put("11806A", "\u00A72");
-            put("1F8B4C", "\u00A72");
-            put("206694", "\u00A71");
-            put("71368A", "\u00A75");
-            put("AD1457", "\u00A7d");
-            put("C27C0E", "\u00A76");
-            put("A84300", "\u00A76");
-            put("992D22", "\u00A74");
-            put("979C9F", "\u00A77");
-            put("546E7A", "\u00A78");
+            //DEFAULT MINECRAFT COLORS
+            put("000000", "\u00A70"); //black
+            put("0000AA", "\u00A71"); //dark blue
+            put("00AA00", "\u00A72"); //dark green 
+            put("00AAAA", "\u00A73"); //dark aqua
+            put("AA0000", "\u00A74"); //dark red
+            put("AA00AA", "\u00A75"); //dark purple if you think its kinda to light like i do then change it to 2A002A
+            put("FFAA00", "\u00A76"); //gold
+            put("AAAAAA", "\u00A77"); //gray
+            put("555555", "\u00A78"); //dark gray
+            put("5555FF", "\u00A79"); //blue 
+            put("55FF55", "\u00A7a"); //green
+            put("55FFFF", "\u00A7b"); //aqua
+            put("FF5555", "\u00A7c"); //red
+            put("FF55FF", "\u00A7d"); //light purple
+            put("FFFF55", "\u00A7e"); //yellow
+            put("FFFFFF", "\u00A7f"); //white
         }
     };
 
