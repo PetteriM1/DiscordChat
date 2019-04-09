@@ -2,6 +2,7 @@ package discordchat;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerDeathEvent;
@@ -29,19 +30,16 @@ public class PlayerListener implements Listener {
         if (Main.jda != null && Main.config.getBoolean("deathMessages")) Main.channel.sendMessage("**:skull: " + msg + "**").queue();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
         if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
-        String u00BB = " » ";
-        if (Main.config.getBoolean("windowsHost")) u00BB = " \u00BB ";
-        if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(e.getPlayer().getName() + u00BB + e.getMessage()).queue();
+        if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(TextFormat.clean(e.getPlayer().getName() + " \u00BB " + e.getMessage())).queue();
     }
 
     private String textFromContainer(TextContainer container) {
         if (container instanceof TranslationContainer) {
             return Server.getInstance().getLanguage().translateString(container.getText(), ((TranslationContainer) container).getParameters());
-        } else {
-            return container.getText();
         }
+        return container.getText();
     }
 }

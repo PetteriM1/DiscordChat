@@ -35,6 +35,3 @@ stopMessages: true
 enableDiscordToMinecraft: true
 # minecraft messages to discord
 enableMinecraftToDiscord: true
-
-# enable if you see Â in messages
-windowsHost: false
