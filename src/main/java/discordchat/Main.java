@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 
 public class Main extends PluginBase {
 
-    public boolean debug;
+    private boolean debug;
 
     public static JDA jda;
     public static TextChannel channel;
@@ -45,7 +45,6 @@ public class Main extends PluginBase {
             if (debug) e.printStackTrace();
         }
         if (jda != null && config.getBoolean("startMessages")) channel.sendMessage(config.getString("status_server_started")).queue();
-        if (debug) getServer().getLogger().info("Startup done successfully");
     }
 
     @Override

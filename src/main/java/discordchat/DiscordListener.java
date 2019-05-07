@@ -2,6 +2,7 @@ package discordchat;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.utils.TextFormat;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -14,7 +15,7 @@ import java.util.StringJoiner;
 public class DiscordListener extends ListenerAdapter {
 
     @SuppressWarnings("serial")
-    Map<String, String> colors = new HashMap<String, String>()
+    private Map<String, String> colors = new HashMap<String, String>()
     {
         {
             put("99AAB5", "\u00A7f");
@@ -46,9 +47,10 @@ public class DiscordListener extends ListenerAdapter {
         if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Main.jda == null || Main.jda.getSelfUser() == null || Main.jda.getSelfUser().getId() == null || e.getAuthor().equals(Main.jda.getSelfUser())) return;
         if (!e.getChannel().equals(Main.channel)) return;
         if (e.getAuthor().isBot()) return;
-        String message = e.getMessage().getContentStripped();
+        String message = TextFormat.clean(e.getMessage().getContentStripped());
         if (message.length() == 0 && e.getMessage().getAttachments().size() == 0) return;
         if (processPlayerListCommand(e, message)) return;
+        if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
         if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;
@@ -81,7 +83,9 @@ public class DiscordListener extends ListenerAdapter {
     }
 
     private Role getRole(Member m) {
-        for (Role role : m.getRoles()) return role;
+        for (Role role : m.getRoles()) {
+            return role;
+        }
         return null;
     }
 
@@ -89,7 +93,6 @@ public class DiscordListener extends ListenerAdapter {
         if (role == null) return "";
         String hex = role.getColor() != null ? Integer.toHexString(role.getColor().getRGB()).toUpperCase() : "99AAB5";
         if (hex.length() == 8) hex = hex.substring(2);
-        String color = colors.get(hex) + role.getName();
-        return color;
+        return colors.get(hex) + role.getName();
     }
 }
