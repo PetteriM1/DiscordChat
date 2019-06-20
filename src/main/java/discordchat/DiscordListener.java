@@ -15,7 +15,7 @@ import java.util.StringJoiner;
 public class DiscordListener extends ListenerAdapter {
 
     @SuppressWarnings("serial")
-    private Map<String, String> colors = new HashMap<String, String>()
+    private final Map<String, String> colors = new HashMap<String, String>()
     {
         {
             put("99AAB5", "\u00A7f");
@@ -48,8 +48,8 @@ public class DiscordListener extends ListenerAdapter {
         if (!e.getChannel().equals(Main.channel)) return;
         if (e.getAuthor().isBot()) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
-        if (message.length() == 0 && e.getMessage().getAttachments().size() == 0) return;
-        if (processPlayerListCommand(e, message)) return;
+        if (message.isEmpty() && e.getMessage().getAttachments().isEmpty()) return;
+        if (processPlayerListCommand(message)) return;
         if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
@@ -57,9 +57,9 @@ public class DiscordListener extends ListenerAdapter {
         for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage("\u00A7f[\u00A7bDiscord" + role + "\u00A7f] " + e.getMember().getEffectiveName() + " \u00BB " + message);
     }
 
-     private boolean processPlayerListCommand(GuildMessageReceivedEvent e, String message) {
+     private boolean processPlayerListCommand(String message) {
         if (message.equalsIgnoreCase("!playerlist") && Main.config.getBoolean("playerListCommand")) {
-            if (Server.getInstance().getOnlinePlayers().size() == 0) {
+            if (Server.getInstance().getOnlinePlayers().isEmpty()) {
                 Main.channel.sendMessage("**No online players**").queue();
             } else {
                 String playerlistMessage = "";
