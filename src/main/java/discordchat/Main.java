@@ -38,7 +38,7 @@ public class Main extends PluginBase {
             jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, config.getString("botStatus")));
             if (debug) getServer().getLogger().info("Set channel topic to " + config.getString("channelTopic"));
             if (channel.getTopic().isEmpty()) channel.getManager().setTopic(config.getString("channelTopic"));
-            if (debug && jda.getGuilds().size() == 0) getServer().getLogger().warning("Your Discord bot is not in any guilds");
+            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not in any guilds");
             if (debug) getServer().getLogger().info("JDA startup done");
         } catch (Exception e) {
             getLogger().error("Couldn't enable Discord chat sync");
