@@ -1,8 +1,6 @@
 # bot token
 botToken: ""
-# discord server id
-serverId: ""
-# discord server chat channel id
+# chat channel id
 channelId: ""
 
 # enable debug

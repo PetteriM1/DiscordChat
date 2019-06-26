@@ -45,7 +45,7 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Main.jda == null || Main.jda.getSelfUser() == null || Main.jda.getSelfUser().getId() == null || e.getAuthor().equals(Main.jda.getSelfUser())) return;
-        if (!e.getChannel().equals(Main.channel)) return;
+        if (!e.getChannel().getId().equals(Main.channelId)) return;
         if (e.getAuthor().isBot()) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
         if (message.isEmpty() && e.getMessage().getAttachments().isEmpty()) return;
@@ -60,7 +60,7 @@ public class DiscordListener extends ListenerAdapter {
      private boolean processPlayerListCommand(String message) {
         if (message.equalsIgnoreCase("!playerlist") && Main.config.getBoolean("playerListCommand")) {
             if (Server.getInstance().getOnlinePlayers().isEmpty()) {
-                Main.channel.sendMessage("**No online players**").queue();
+                Main.sendMessage("**No online players**");
             } else {
                 String playerlistMessage = "";
                 playerlistMessage += "**Online players (" + Server.getInstance().getOnlinePlayers().size() + "/" + Server.getInstance().getMaxPlayers() + "):**";
@@ -72,14 +72,12 @@ public class DiscordListener extends ListenerAdapter {
                 playerlistMessage += players.toString();
                 if (playerlistMessage.length() > 1996) playerlistMessage = playerlistMessage.substring(0, 1993) + "...";
                 playerlistMessage += "\n```";
-                Main.channel.sendMessage(playerlistMessage).queue();
+                Main.sendMessage(playerlistMessage);
             }
         } else if (message.equalsIgnoreCase("!ip") && Main.config.getBoolean("ipCommand")) {
-            Main.channel.sendMessage("```\nAddress: " + Main.config.getString("serverIp") + "\nPort: " + Main.config.getString("serverPort") + "\n```").queue();
-        } else {
-            return false;
+            Main.sendMessage("```\nAddress: " + Main.config.getString("serverIp") + "\nPort: " + Main.config.getString("serverPort") + "\n```");
         }
-        return true;
+        return false;
     }
 
     private Role getRole(Member m) {

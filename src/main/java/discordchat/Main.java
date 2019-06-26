@@ -1,5 +1,6 @@
 package discordchat;
 
+import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import net.dv8tion.jda.core.AccountType;
@@ -11,12 +12,10 @@ import net.dv8tion.jda.core.entities.TextChannel;
 
 public class Main extends PluginBase {
 
-    private boolean debug;
-
     public static JDA jda;
-    public static Guild server;
-    public static TextChannel channel;
     public static Config config;
+    private static boolean debug;
+    protected static String channelId;
 
     @Override
     public void onEnable() {
@@ -26,28 +25,39 @@ public class Main extends PluginBase {
         if (debug) getServer().getLogger().info("Registering events for PlayerListener");
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
-            if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "\u00A7cnull"));
+            if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "null"));
             jda = new JDABuilder(AccountType.BOT).setToken(config.getString("botToken")).buildBlocking();
-            if (debug) getServer().getLogger().info("Set server id to " + config.getString("serverId", "\u00A7cnull"));
-            server = jda.getGuildById(config.getString("serverId"));
-            if (debug) getServer().getLogger().info("Set server channel id to " + config.getString("channelId", "\u00A7cnull"));
-            channel = jda.getTextChannelById(config.getString("channelId"));
+            if (debug) getServer().getLogger().info("Set server channel id to " + config.getString("channelId", "null"));
+            channelId = config.getString("channelId");
             if (debug) getServer().getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordListener());
             if (debug) getServer().getLogger().info("Set bot status to " + config.getString("botStatus"));
             jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, config.getString("botStatus")));
-            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not in any guild");
+            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not on any server");
             if (debug) getServer().getLogger().info("Startup done successfully");
         } catch (Exception e) {
             getLogger().error("Couldn't enable Discord chat sync");
             if (debug) e.printStackTrace();
         }
-        if (jda != null && config.getBoolean("startMessages")) channel.sendMessage("**:white_check_mark: Server started!**").queue();
+        if (config.getBoolean("startMessages")) sendMessage("**:white_check_mark: Server started!**");
     }
 
     @Override
     public void onDisable() {
-        if (jda != null && config.getBoolean("stopMessages")) channel.sendMessage("**:x: Server stopped!**").queue();
+        if (config.getBoolean("stopMessages")) sendMessage("**:x: Server stopped!**");
         if (debug) getServer().getLogger().info("Disabling the plugin");
+    }
+
+    public static void sendMessage(String message) {
+        if (jda != null) {
+            TextChannel channel = jda.getTextChannelById(channelId);
+            if (channel != null) {
+                channel.sendMessage(message).queue();
+            } else if (debug) {
+                Server.getInstance().getLogger().info("TextChannel is null");
+            }
+        } else if (debug) {
+            Server.getInstance().getLogger().info("JDA is null");
+        }
     }
 }
