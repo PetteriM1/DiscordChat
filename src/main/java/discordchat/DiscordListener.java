@@ -74,8 +74,10 @@ public class DiscordListener extends ListenerAdapter {
                 playerlistMessage += "\n```";
                 Main.sendMessage(playerlistMessage);
             }
+            return true;
         } else if (message.equalsIgnoreCase("!ip") && Main.config.getBoolean("ipCommand")) {
             Main.sendMessage("```\nAddress: " + Main.config.getString("serverIp") + "\nPort: " + Main.config.getString("serverPort") + "\n```");
+            return true;
         }
         return false;
     }
