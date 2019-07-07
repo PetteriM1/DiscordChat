@@ -1,5 +1,6 @@
 package discordchat;
 
+import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import net.dv8tion.jda.core.AccountType;
@@ -10,11 +11,10 @@ import net.dv8tion.jda.core.entities.TextChannel;
 
 public class Main extends PluginBase {
 
-    private boolean debug;
-
-    public static JDA jda;
-    public static TextChannel channel;
-    public static Config config;
+    static Config config;
+    static JDA jda;
+    static String channelId;
+    private static boolean debug;
 
     @Override
     public void onEnable() {
@@ -24,10 +24,10 @@ public class Main extends PluginBase {
         if (debug) getServer().getLogger().info("Registering events for PlayerListener");
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
-            if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "\u00A7cnull"));
+            if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "null"));
             jda = new JDABuilder(AccountType.BOT).setToken(config.getString("botToken")).buildBlocking();
-            if (debug) getServer().getLogger().info("Set server channel id to " + config.getString("channelId", "\u00A7cnull"));
-            channel = jda.getTextChannelById(config.getString("channelId"));
+            if (debug) getServer().getLogger().info("Set server channel id to " + config.getString("channelId", "null"));
+            channelId = config.getString("channelId");
             if (debug) getServer().getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordListener());
             if (config.getBoolean("discordConsole")) {
@@ -37,19 +37,32 @@ public class Main extends PluginBase {
             if (debug) getServer().getLogger().info("Set bot status to " + config.getString("botStatus"));
             jda.getPresence().setGame(Game.of(Game.GameType.DEFAULT, config.getString("botStatus")));
             if (debug) getServer().getLogger().info("Set channel topic to " + config.getString("channelTopic"));
-            if (channel.getTopic().isEmpty()) channel.getManager().setTopic(config.getString("channelTopic"));
-            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not in any guilds");
-            if (debug) getServer().getLogger().info("JDA startup done");
+            if (!config.getString("channelTopic").isEmpty()) jda.getTextChannelById(channelId).getManager().setTopic(config.getString("channelTopic"));
+            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not on any server");
+            if (debug) getServer().getLogger().info("Startup done successfully");
         } catch (Exception e) {
             getLogger().error("Couldn't enable Discord chat sync");
             if (debug) e.printStackTrace();
         }
-        if (jda != null && config.getBoolean("startMessages")) channel.sendMessage(config.getString("status_server_started")).queue();
+        if (config.getBoolean("startMessages")) sendMessage(config.getString("status_server_started"));
     }
 
     @Override
     public void onDisable() {
-        if (jda != null && config.getBoolean("stopMessages")) channel.sendMessage(config.getString("status_server_stopped")).queue();
+        if (config.getBoolean("stopMessages")) sendMessage(config.getString("status_server_stopped"));
         if (debug) getServer().getLogger().info("Disabling the plugin");
+    }
+
+    public static void sendMessage(String message) {
+        if (jda != null) {
+            TextChannel channel = jda.getTextChannelById(channelId);
+            if (channel != null) {
+                channel.sendMessage(message).queue();
+            } else if (debug) {
+                Server.getInstance().getLogger().info("TextChannel is null");
+            }
+        } else if (debug) {
+            Server.getInstance().getLogger().info("JDA is null");
+        }
     }
 }

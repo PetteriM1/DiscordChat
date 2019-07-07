@@ -16,24 +16,24 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Main.jda != null && Main.config.getBoolean("joinMessages")) Main.channel.sendMessage("**:heavy_plus_sign: " + e.getPlayer().getName() + " joined the server**").queue();
+        if (Main.config.getBoolean("joinMessages")) Main.sendMessage("**:heavy_plus_sign: " + e.getPlayer().getName() + " joined the server**");
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (Main.jda != null && Main.config.getBoolean("quitMessages")) Main.channel.sendMessage("**:heavy_minus_sign: " + e.getPlayer().getName() + " left the server**").queue();
+        if (Main.config.getBoolean("quitMessages")) Main.sendMessage("**:heavy_minus_sign: " + e.getPlayer().getName() + " left the server**");
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         String msg = TextFormat.clean(textFromContainer(e.getDeathMessage()));
-        if (Main.jda != null && Main.config.getBoolean("deathMessages")) Main.channel.sendMessage("**:skull: " + msg + "**").queue();
+        if (Main.config.getBoolean("deathMessages")) Main.sendMessage("**:skull: " + msg + "**");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
         if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
-        if (!e.isCancelled() && Main.channel != null) Main.channel.sendMessage(TextFormat.clean(e.getPlayer().getName() + " \u00BB " + e.getMessage())).queue();
+        if (!e.isCancelled()) Main.sendMessage(TextFormat.clean(e.getPlayer().getName() + " \u00BB " + e.getMessage()));
     }
 
     private String textFromContainer(TextContainer container) {

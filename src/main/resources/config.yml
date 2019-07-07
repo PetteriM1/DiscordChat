@@ -1,7 +1,6 @@
 # bot token
 botToken: ""
-
-# discord server chat channel id
+# Discord server chat channel id
 channelId: ""
 
 
