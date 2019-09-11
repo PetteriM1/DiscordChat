@@ -46,11 +46,12 @@ public class DiscordListener extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Main.jda == null || Main.jda.getSelfUser() == null || Main.jda.getSelfUser().getId() == null || e.getAuthor().equals(Main.jda.getSelfUser())) return;
         if (!e.getChannel().getId().equals(Main.channelId)) return;
-        if (e.getAuthor().isBot()) return;
+        if (e.getAuthor().isBot() && !Main.config.getBoolean("allowBotMessages")) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
         if (message.isEmpty() && e.getMessage().getAttachments().isEmpty()) return;
         if (processPlayerListCommand(message)) return;
         if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
+        if (message.length() > Main.config.getInt("maxMessageLength")) message = message.substring(0, Main.config.getInt("maxMessageLength"));
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
         if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;

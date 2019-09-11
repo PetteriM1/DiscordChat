@@ -48,7 +48,7 @@ enableMinecraftToDiscord: true
 
 # enable Discord console
 discordConsole: false
-# discord server console channel id
+# Discord server console channel id
 consoleChannelId: ""
 
 
@@ -56,6 +56,12 @@ consoleChannelId: ""
 discordToMinecraftChatFormatting: ""
 # formatting of game messages shown in Discord
 minecraftToDiscordChatFormatting: ""
+
+
+# Discord messages over that length will be cut
+maxMessageLength: 255
+# allow massages sent by a bot to show in game
+allowBotMessages: false
 
 
 # translations
