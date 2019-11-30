@@ -3,10 +3,10 @@ package discordchat;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.utils.TextFormat;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.StringJoiner;
 public class DiscordListener extends ListenerAdapter {
 
     @SuppressWarnings("serial")
-    private final Map<String, String> colors = new HashMap<String, String>()
+    private static final Map<String, String> colors = new HashMap<String, String>()
     {
         {
             put("99AAB5", "\u00A7f");
@@ -42,6 +42,9 @@ public class DiscordListener extends ListenerAdapter {
         }
     };
 
+    private String lastMessage;
+    private String lastName;
+
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Main.jda == null || Main.jda.getSelfUser() == null || Main.jda.getSelfUser().getId() == null || e.getAuthor().equals(Main.jda.getSelfUser())) return;
@@ -55,16 +58,26 @@ public class DiscordListener extends ListenerAdapter {
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
         if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;
-        for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage(Main.config.getString("discord_prefix").replace("%role%", role) + e.getMember().getEffectiveName() + " \u00BB " + message);
+        String name = e.getMember().getEffectiveName();
+        if (Main.config.getBoolean("spamFilter")) {
+            if (message.equals(lastMessage) && name.equals(lastName)) return;
+            lastMessage = message;
+            lastName = name;
+        }
+        if (Main.config.getBoolean("enableMessagesToConsole")) {
+            Server.getInstance().broadcastMessage(Main.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
+        } else {
+            for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage(Main.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
+        }
     }
 
      private boolean processPlayerListCommand(String message) {
         if (message.equalsIgnoreCase("!playerlist") && Main.config.getBoolean("playerListCommand")) {
             if (Server.getInstance().getOnlinePlayers().isEmpty()) {
-                Main.sendMessage("**No online players**");
+                API.sendMessage(Main.config.getString("command_playerlist_empty"));
             } else {
                 String playerlistMessage = "";
-                playerlistMessage += "**Online players (" + Server.getInstance().getOnlinePlayers().size() + "/" + Server.getInstance().getMaxPlayers() + "):**";
+                playerlistMessage += "**" + Main.config.getString("command_playerlist_players") + " (" + Server.getInstance().getOnlinePlayers().size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
                 playerlistMessage += "\n```\n";
                 StringJoiner players = new StringJoiner(", ");
                 for (Player player : Server.getInstance().getOnlinePlayers().values()) {
@@ -73,11 +86,11 @@ public class DiscordListener extends ListenerAdapter {
                 playerlistMessage += players.toString();
                 if (playerlistMessage.length() > 1996) playerlistMessage = playerlistMessage.substring(0, 1993) + "...";
                 playerlistMessage += "\n```";
-                Main.sendMessage(playerlistMessage);
+                API.sendMessage(playerlistMessage);
             }
             return true;
         } else if (message.equalsIgnoreCase("!ip") && Main.config.getBoolean("ipCommand")) {
-            Main.sendMessage("```\nAddress: " + Main.config.getString("serverIp") + "\nPort: " + Main.config.getString("serverPort") + "\n```");
+            API.sendMessage("```\n" + Main.config.getString("commands_ip_address") + ' ' + Main.config.getString("serverIp") + '\n' + Main.config.getString("commands_ip_port") + ' ' + Main.config.getString("serverPort") + "\n```");
             return true;
         }
         return false;

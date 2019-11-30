@@ -14,29 +14,42 @@ import cn.nukkit.utils.TextFormat;
 
 public class PlayerListener implements Listener {
 
+    private String lastMessage;
+    private String lastName;
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Main.config.getBoolean("joinMessages")) Main.sendMessage("**:heavy_plus_sign: " + e.getPlayer().getName() + " joined the server**");
+        if (Main.config.getBoolean("joinMessages")) API.sendMessage(Main.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()));
+
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (Main.config.getBoolean("quitMessages")) Main.sendMessage("**:heavy_minus_sign: " + e.getPlayer().getName() + " left the server**");
+        if (Main.config.getBoolean("quitMessages")) API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
-        String msg = TextFormat.clean(textFromContainer(e.getDeathMessage()));
-        if (Main.config.getBoolean("deathMessages")) Main.sendMessage("**:skull: " + msg + "**");
+        if (Main.config.getBoolean("deathMessages")) API.sendMessage(Main.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
-        if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
-        if (!e.isCancelled()) Main.sendMessage(TextFormat.clean(e.getPlayer().getName() + " \u00BB " + e.getMessage()));
+        if (!e.isCancelled()) {
+            if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
+            String msg = e.getMessage();
+            String name = e.getPlayer().getName();
+            if (Main.config.getBoolean("spamFilter")) {
+                if (msg.startsWith("Horion - the best minecraft bedrock utility mod - horionclient.eu | ")) return;
+                if (msg.equals(lastMessage) && name.equals(lastName)) return;
+                lastMessage = msg;
+                lastName = name;
+            }
+            API.sendMessage(TextFormat.clean(name + " \u00BB " + msg));
+        }
     }
 
-    private String textFromContainer(TextContainer container) {
+    private static String textFromContainer(TextContainer container) {
         if (container instanceof TranslationContainer) {
             return Server.getInstance().getLanguage().translateString(container.getText(), ((TranslationContainer) container).getParameters());
         }

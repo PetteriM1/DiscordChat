@@ -1,10 +1,14 @@
+# config version, do not edit
+configVersion: 2
+
+
 # bot token
-botToken: ""
+botToken: "PUT YOUR BOT TOKEN HERE"
 # Discord server chat channel id
-channelId: ""
+channelId: "PUT YOUR CHANNEL ID HERE"
 
 
-# enable debug
+# enable debug messages
 debug: false
 
 
@@ -14,7 +18,7 @@ enableBotStatus: true
 botStatus: "Minecraft"
 
 
-# set text channel topic if it is empty
+# set text channel topic, leave empty to disable
 channelTopic: "Powered by DiscordChat for Nukkit"
 
 
@@ -44,34 +48,38 @@ stopMessages: true
 enableDiscordToMinecraft: true
 # enable Minecraft messages to Discord
 enableMinecraftToDiscord: true
+# show Discord messages also in console
+enableMessagesToConsole: false
 
 
 # enable Discord console
 discordConsole: false
 # Discord server console channel id
-consoleChannelId: ""
+consoleChannelId: "NOT AVAILABLE YET"
 
 
 # formatting of Discord messages shown in game
-discordToMinecraftChatFormatting: ""
+discordToMinecraftChatFormatting: "NOT AVAILABLE YET"
 # formatting of game messages shown in Discord
-minecraftToDiscordChatFormatting: ""
+minecraftToDiscordChatFormatting: "NOT AVAILABLE YET"
 
 
 # Discord messages over that length will be cut
 maxMessageLength: 255
 # allow massages sent by a bot to show in game
 allowBotMessages: false
+# enable spam filter (beta)
+spamFilter: false
 
 
 # translations
 status_server_started: "**:white_check_mark: Server started!**"
 status_server_stopped: "**:x: Server stopped!**"
-info_player_joined: ""
-info_player_left: ""
-info_player_death: ""
-command_playerlist_empty: ""
-command_playerlist_players: ""
-commands_ip_address: ""
-commands_ip_port: ""
-discord_prefix: "§f[§bDiscord%role%§f] "
+info_player_joined: "**:heavy_plus_sign: %player% joined the server**"
+info_player_left: "**:heavy_minus_sign: %player% left the server**"
+info_player_death: "**:skull: %death_message%**"
+command_playerlist_empty: "**No online players**"
+command_playerlist_players: "Online players"
+commands_ip_address: "Address:"
+commands_ip_port: "Port:"
+discord_prefix: "§f[§bDiscord%role%§f]"
