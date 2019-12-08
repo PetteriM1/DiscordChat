@@ -19,27 +19,27 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Main.config.getBoolean("joinMessages")) API.sendMessage(Main.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()));
+        if (DiscordChatMain.config.getBoolean("joinMessages")) API.sendMessage(DiscordChatMain.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()));
 
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (Main.config.getBoolean("quitMessages")) API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
+        if (DiscordChatMain.config.getBoolean("quitMessages")) API.sendMessage(DiscordChatMain.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
-        if (Main.config.getBoolean("deathMessages")) API.sendMessage(Main.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
+        if (DiscordChatMain.config.getBoolean("deathMessages")) API.sendMessage(DiscordChatMain.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
         if (!e.isCancelled()) {
-            if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
+            if (!DiscordChatMain.config.getBoolean("enableMinecraftToDiscord")) return;
             String msg = e.getMessage();
             String name = e.getPlayer().getName();
-            if (Main.config.getBoolean("spamFilter")) {
+            if (DiscordChatMain.config.getBoolean("spamFilter")) {
                 if (msg.startsWith("Horion - the best minecraft bedrock utility mod - horionclient.eu | ")) return;
                 if (msg.equals(lastMessage) && name.equals(lastName)) return;
                 lastMessage = msg;

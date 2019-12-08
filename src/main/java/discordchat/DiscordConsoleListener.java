@@ -8,12 +8,12 @@ public class DiscordConsoleListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
-        if (!Main.config.getBoolean("discordConsole")) return;
-        if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Main.jda == null || Main.jda.getSelfUser() == null || Main.jda.getSelfUser().getId() == null || e.getAuthor().equals(Main.jda.getSelfUser())) return;
-        if (!e.getChannel().getId().equals(Main.consoleChannelId)) return;
+        if (!DiscordChatMain.config.getBoolean("discordConsole")) return;
+        if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || DiscordChatMain.jda == null || DiscordChatMain.jda.getSelfUser() == null || DiscordChatMain.jda.getSelfUser().getId() == null || e.getAuthor().equals(DiscordChatMain.jda.getSelfUser())) return;
+        if (!e.getChannel().getId().equals(DiscordChatMain.consoleChannelId)) return;
         String message = e.getMessage().getContentStripped();
-        if (message.length() > 1 && message.startsWith(Main.config.getString("commandPrefix"))) {
-            Server.getInstance().getScheduler().scheduleTask(Main.instance, () -> Server.getInstance().dispatchCommand(Main.discordCommandSender, message.substring(1)));
+        if (message.length() > 1 && message.startsWith(DiscordChatMain.config.getString("commandPrefix"))) {
+            Server.getInstance().getScheduler().scheduleTask(DiscordChatMain.instance, () -> Server.getInstance().dispatchCommand(DiscordChatMain.discordCommandSender, message.substring(1)));
         }
     }
 }

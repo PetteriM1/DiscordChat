@@ -14,14 +14,14 @@ public class API {
     }
 
     public static void sendMessage(String message, boolean toConsole) {
-        if (Main.jda != null) {
-            TextChannel channel = Main.jda.getTextChannelById(toConsole ? Main.consoleChannelId : Main.channelId);
+        if (DiscordChatMain.jda != null) {
+            TextChannel channel = DiscordChatMain.jda.getTextChannelById(toConsole ? DiscordChatMain.consoleChannelId : DiscordChatMain.channelId);
             if (channel != null) {
                 channel.sendMessage(message).queue();
-            } else if (Main.debug) {
+            } else if (DiscordChatMain.debug) {
                 Server.getInstance().getLogger().error("TextChannel is null");
             }
-        } else if (Main.debug) {
+        } else if (DiscordChatMain.debug) {
             Server.getInstance().getLogger().error("JDA is null");
         }
     }

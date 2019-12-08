@@ -47,37 +47,37 @@ public class DiscordChatListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
-        if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Main.jda == null || Main.jda.getSelfUser() == null || Main.jda.getSelfUser().getId() == null || e.getAuthor().equals(Main.jda.getSelfUser())) return;
-        if (!e.getChannel().getId().equals(Main.channelId)) return;
-        if (e.getAuthor().isBot() && !Main.config.getBoolean("allowBotMessages")) return;
+        if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || DiscordChatMain.jda == null || DiscordChatMain.jda.getSelfUser() == null || DiscordChatMain.jda.getSelfUser().getId() == null || e.getAuthor().equals(DiscordChatMain.jda.getSelfUser())) return;
+        if (!e.getChannel().getId().equals(DiscordChatMain.channelId)) return;
+        if (e.getAuthor().isBot() && !DiscordChatMain.config.getBoolean("allowBotMessages")) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
         if (message.isEmpty() && e.getMessage().getAttachments().isEmpty()) return;
         if (processPlayerListCommand(message)) return;
         if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
-        if (message.length() > Main.config.getInt("maxMessageLength")) message = message.substring(0, Main.config.getInt("maxMessageLength"));
+        if (message.length() > DiscordChatMain.config.getInt("maxMessageLength")) message = message.substring(0, DiscordChatMain.config.getInt("maxMessageLength"));
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
-        if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;
+        if (!DiscordChatMain.config.getBoolean("enableDiscordToMinecraft")) return;
         String name = e.getMember().getEffectiveName();
-        if (Main.config.getBoolean("spamFilter")) {
+        if (DiscordChatMain.config.getBoolean("spamFilter")) {
             if (message.equals(lastMessage) && name.equals(lastName)) return;
             lastMessage = message;
             lastName = name;
         }
-        if (Main.config.getBoolean("enableMessagesToConsole")) {
-            Server.getInstance().broadcastMessage(Main.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
+        if (DiscordChatMain.config.getBoolean("enableMessagesToConsole")) {
+            Server.getInstance().broadcastMessage(DiscordChatMain.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
         } else {
-            for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage(Main.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
+            for (Player player : Server.getInstance().getOnlinePlayers().values()) player.sendMessage(DiscordChatMain.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
         }
     }
 
      private boolean processPlayerListCommand(String message) {
-        if (message.equalsIgnoreCase(Main.config.getString("commandPrefix") + "playerlist") && Main.config.getBoolean("playerListCommand")) {
+        if (message.equalsIgnoreCase(DiscordChatMain.config.getString("commandPrefix") + "playerlist") && DiscordChatMain.config.getBoolean("playerListCommand")) {
             if (Server.getInstance().getOnlinePlayers().isEmpty()) {
-                API.sendMessage(Main.config.getString("command_playerlist_empty"));
+                API.sendMessage(DiscordChatMain.config.getString("command_playerlist_empty"));
             } else {
                 String playerlistMessage = "";
-                playerlistMessage += "**" + Main.config.getString("command_playerlist_players") + " (" + Server.getInstance().getOnlinePlayers().size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
+                playerlistMessage += "**" + DiscordChatMain.config.getString("command_playerlist_players") + " (" + Server.getInstance().getOnlinePlayers().size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
                 playerlistMessage += "\n```\n";
                 StringJoiner players = new StringJoiner(", ");
                 for (Player player : Server.getInstance().getOnlinePlayers().values()) {
@@ -89,8 +89,8 @@ public class DiscordChatListener extends ListenerAdapter {
                 API.sendMessage(playerlistMessage);
             }
             return true;
-        } else if (message.equalsIgnoreCase(Main.config.getString("commandPrefix") + "ip") && Main.config.getBoolean("ipCommand")) {
-            API.sendMessage("```\n" + Main.config.getString("commands_ip_address") + ' ' + Main.config.getString("serverIp") + '\n' + Main.config.getString("commands_ip_port") + ' ' + Main.config.getString("serverPort") + "\n```");
+        } else if (message.equalsIgnoreCase(DiscordChatMain.config.getString("commandPrefix") + "ip") && DiscordChatMain.config.getBoolean("ipCommand")) {
+            API.sendMessage("```\n" + DiscordChatMain.config.getString("commands_ip_address") + ' ' + DiscordChatMain.config.getString("serverIp") + '\n' + DiscordChatMain.config.getString("commands_ip_port") + ' ' + DiscordChatMain.config.getString("serverPort") + "\n```");
             return true;
         }
         return false;
