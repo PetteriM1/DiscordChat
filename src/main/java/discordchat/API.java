@@ -17,4 +17,17 @@ public class API {
             Server.getInstance().getLogger().error("JDA is null");
         }
     }
+
+    public static void sendToConsole(String message) {
+        if (Main.jda != null) {
+            TextChannel channel = Main.jda.getTextChannelById(Main.consoleChannelId);
+            if (channel != null) {
+                channel.sendMessage(message).queue();
+            } else if (Main.debug) {
+                Server.getInstance().getLogger().error("TextChannel for console is null");
+            }
+        } else if (Main.debug) {
+            Server.getInstance().getLogger().error("JDA is null");
+        }
+    }
 }

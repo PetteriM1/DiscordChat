@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 2
+configVersion: 3
 
 
 # bot token
@@ -12,9 +12,7 @@ channelId: "PUT YOUR CHANNEL ID HERE"
 debug: false
 
 
-# enable bot status
-enableBotStatus: true
-# Playing _________
+# set bot Playing ______ status, leave empty to disable
 botStatus: "Minecraft"
 
 
@@ -52,10 +50,14 @@ enableMinecraftToDiscord: true
 enableMessagesToConsole: false
 
 
+# prefix of discord commands
+commandPrefix: "!"
+
+
 # enable Discord console
 discordConsole: false
 # Discord server console channel id
-consoleChannelId: "NOT AVAILABLE YET"
+consoleChannelId: ""
 
 
 # formatting of Discord messages shown in game

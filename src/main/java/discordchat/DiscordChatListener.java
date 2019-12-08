@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class DiscordListener extends ListenerAdapter {
+public class DiscordChatListener extends ListenerAdapter {
 
     @SuppressWarnings("serial")
     private static final Map<String, String> colors = new HashMap<String, String>()
@@ -72,7 +72,7 @@ public class DiscordListener extends ListenerAdapter {
     }
 
      private boolean processPlayerListCommand(String message) {
-        if (message.equalsIgnoreCase("!playerlist") && Main.config.getBoolean("playerListCommand")) {
+        if (message.equalsIgnoreCase(Main.config.getString("commandPrefix") + "playerlist") && Main.config.getBoolean("playerListCommand")) {
             if (Server.getInstance().getOnlinePlayers().isEmpty()) {
                 API.sendMessage(Main.config.getString("command_playerlist_empty"));
             } else {
@@ -89,7 +89,7 @@ public class DiscordListener extends ListenerAdapter {
                 API.sendMessage(playerlistMessage);
             }
             return true;
-        } else if (message.equalsIgnoreCase("!ip") && Main.config.getBoolean("ipCommand")) {
+        } else if (message.equalsIgnoreCase(Main.config.getString("commandPrefix") + "ip") && Main.config.getBoolean("ipCommand")) {
             API.sendMessage("```\n" + Main.config.getString("commands_ip_address") + ' ' + Main.config.getString("serverIp") + '\n' + Main.config.getString("commands_ip_port") + ' ' + Main.config.getString("serverPort") + "\n```");
             return true;
         }

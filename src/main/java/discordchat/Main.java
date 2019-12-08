@@ -9,13 +9,17 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class Main extends PluginBase {
 
+    static Main instance;
     static Config config;
     static JDA jda;
     static String channelId;
+    static String consoleChannelId;
     static boolean debug;
+    static DiscordCommandSender discordCommandSender;
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
         config = getConfig();
         checkAndUpdateConfig();
@@ -30,13 +34,19 @@ public class Main extends PluginBase {
             if (debug) getServer().getLogger().info("Setting server channel id to " + config.getString("channelId", "null"));
             channelId = config.getString("channelId");
             if (debug) getServer().getLogger().info("Registering events for DiscordListener");
-            jda.addEventListener(new DiscordListener());
+            jda.addEventListener(new DiscordChatListener());
             if (config.getBoolean("discordConsole")) {
+                if (debug) getServer().getLogger().info("Creating new DiscordCommandSender");
+                discordCommandSender = new DiscordCommandSender();
+                if (debug) getServer().getLogger().info("Setting console channel id to " + config.getString("consoleChannelId", "null"));
+                consoleChannelId = config.getString("consoleChannelId");
                 if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
-                jda.addEventListener(new DiscordConsole());
+                jda.addEventListener(new DiscordConsoleListener());
             }
-            if (debug) getServer().getLogger().info("Setting bot status to " + config.getString("botStatus"));
-            jda.getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, config.getString("botStatus")));
+            if (!config.getString("botStatus").isEmpty()) {
+                if (debug) getServer().getLogger().info("Setting bot status to " + config.getString("botStatus"));
+                jda.getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, config.getString("botStatus")));
+            }
             if (!config.getString("channelTopic").isEmpty()) {
                 if (debug) getServer().getLogger().info("Setting channel topic to " + config.getString("channelTopic"));
                 TextChannel ch = jda.getTextChannelById(channelId);
@@ -62,7 +72,15 @@ public class Main extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        if (config.getInt("configVersion") != 2) {
+        if (config.getInt("configVersion") != 3) {
+            if (config.getInt("configVersion") == 2) {
+                config.set("commandPrefix", "!");
+                config.set("configVersion", 3);
+                config.save();
+                config = getConfig();
+                getLogger().warning("Config file updated.");
+                return;
+            }
             saveResource("config.yml", true);
             config = getConfig();
             getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
