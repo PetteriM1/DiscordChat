@@ -58,6 +58,8 @@ commandPrefix: "!"
 discordConsole: false
 # Discord server console channel id
 consoleChannelId: ""
+# Discord Role required to use console commands
+consoleRole: ""
 
 
 # formatting of Discord messages shown in game

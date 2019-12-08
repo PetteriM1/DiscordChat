@@ -13,7 +13,7 @@ public class DiscordChatMain extends PluginBase {
     static Config config;
     static JDA jda;
     static String channelId;
-    static String consoleChannelId;
+    static String consoleChannelId, consoleRole;
     static boolean debug;
     static DiscordCommandSender discordCommandSender;
 
@@ -40,6 +40,8 @@ public class DiscordChatMain extends PluginBase {
                 discordCommandSender = new DiscordCommandSender();
                 if (debug) getServer().getLogger().info("Setting console channel id to " + config.getString("consoleChannelId", "null"));
                 consoleChannelId = config.getString("consoleChannelId");
+                if (debug) getServer().getLogger().info("Setting console role to " + config.getString("consoleRole", "null"));
+                consoleRole = config.getString("consoleRole", "");
                 if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
                 jda.addEventListener(new DiscordConsoleListener());
             }
