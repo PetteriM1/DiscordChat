@@ -26,7 +26,7 @@ public class DiscordConsoleListener extends ListenerAdapter {
             return false;
         }
         for (Role r : member.getRoles()) {
-            if (r.getName() == DiscordChatMain.consoleRole) return true;
+            if (r.getName().compareTo(DiscordChatMain.consoleRole) == 0) return true;
         }
         return false;
     }
