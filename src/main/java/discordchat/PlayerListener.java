@@ -27,13 +27,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         String msg = TextFormat.clean(textFromContainer(e.getDeathMessage()));
-        if (Main.config.getBoolean("deathMessages")) Main.sendMessage("**:skull: " + msg + "**");
+        if (Main.config.getBoolean("deathMessages")) Main.sendMessage("**:skull: `" + msg + "`**");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
         if (!Main.config.getBoolean("enableMinecraftToDiscord")) return;
-        if (!e.isCancelled()) Main.sendMessage(TextFormat.clean(e.getPlayer().getName() + " \u00BB " + e.getMessage()));
+        if (!e.isCancelled()) Main.sendMessage(TextFormat.clean(e.getPlayer().getName() + " \u00BB `" + e.getMessage() + "`"));
     }
 
     private String textFromContainer(TextContainer container) {
