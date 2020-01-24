@@ -1,6 +1,5 @@
 package discordchat;
 
-import cn.nukkit.Server;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class API {
@@ -11,10 +10,10 @@ public class API {
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Main.debug) {
-                Server.getInstance().getLogger().error("TextChannel is null");
+                Main.instance.getLogger().error("TextChannel is null");
             }
         } else if (Main.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+            Main.instance.getLogger().error("JDA is null");
         }
     }
 
@@ -24,10 +23,10 @@ public class API {
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Main.debug) {
-                Server.getInstance().getLogger().error("TextChannel for console is null");
+                Main.instance.getLogger().error("TextChannel for console is null");
             }
         } else if (Main.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+            Main.instance.getLogger().error("JDA is null");
         }
     }
 }
