@@ -72,13 +72,23 @@ public class Main extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        if (config.getInt("configVersion") != 3) {
+        if (config.getInt("configVersion") != 4) {
             if (config.getInt("configVersion") == 2) {
                 config.set("commandPrefix", "!");
-                config.set("configVersion", 3);
+                config.set("consoleRole", "");
+                config.set("err_no_perm", "Your role doesn't have permission to run console commands");
+                config.set("configVersion", 4);
                 config.save();
                 config = getConfig();
-                getLogger().warning("Config file updated.");
+                getLogger().warning("Config file updated [2 -> 4]");
+                return;
+            } else if (config.getInt("configVersion") == 3) {
+                config.set("consoleRole", "");
+                config.set("err_no_perm", "Your role doesn't have permission to run console commands");
+                config.set("configVersion", 4);
+                config.save();
+                config = getConfig();
+                getLogger().warning("Config file updated [3 -> 4]");
                 return;
             }
             saveResource("config.yml", true);

@@ -1,11 +1,11 @@
 # config version, do not edit
-configVersion: 3
+configVersion: 4
 
 
 # bot token
-botToken: "PUT YOUR BOT TOKEN HERE"
+botToken: ""
 # Discord server chat channel id
-channelId: "PUT YOUR CHANNEL ID HERE"
+channelId: ""
 
 
 # enable debug messages
@@ -58,6 +58,8 @@ commandPrefix: "!"
 discordConsole: false
 # Discord server console channel id
 consoleChannelId: ""
+# role required to run console commands
+consoleRole: ""
 
 
 # formatting of Discord messages shown in game
@@ -85,3 +87,4 @@ command_playerlist_players: "Online players"
 commands_ip_address: "Address:"
 commands_ip_port: "Port:"
 discord_prefix: "§f[§bDiscord%role%§f]"
+err_no_perm: "Your role doesn't have permission to run console commands"

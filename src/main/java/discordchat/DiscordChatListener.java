@@ -76,17 +76,17 @@ public class DiscordChatListener extends ListenerAdapter {
             if (Server.getInstance().getOnlinePlayers().isEmpty()) {
                 API.sendMessage(Main.config.getString("command_playerlist_empty"));
             } else {
-                String playerlistMessage = "";
-                playerlistMessage += "**" + Main.config.getString("command_playerlist_players") + " (" + Server.getInstance().getOnlinePlayers().size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
-                playerlistMessage += "\n```\n";
+                String playerListMessage = "";
+                playerListMessage += "**" + Main.config.getString("command_playerlist_players") + " (" + Server.getInstance().getOnlinePlayers().size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
+                playerListMessage += "\n```\n";
                 StringJoiner players = new StringJoiner(", ");
                 for (Player player : Server.getInstance().getOnlinePlayers().values()) {
                     players.add(player.getName());
                 }
-                playerlistMessage += players.toString();
-                if (playerlistMessage.length() > 1996) playerlistMessage = playerlistMessage.substring(0, 1993) + "...";
-                playerlistMessage += "\n```";
-                API.sendMessage(playerlistMessage);
+                playerListMessage += players.toString();
+                if (playerListMessage.length() > 1996) playerListMessage = playerListMessage.substring(0, 1993) + "...";
+                playerListMessage += "\n```";
+                API.sendMessage(playerListMessage);
             }
             return true;
         } else if (message.equalsIgnoreCase(Main.config.getString("commandPrefix") + "ip") && Main.config.getBoolean("ipCommand")) {
