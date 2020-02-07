@@ -73,7 +73,7 @@ maxMessageLength: 255
 # allow massages sent by a bot to show in game
 allowBotMessages: false
 # enable spam filter (beta)
-spamFilter: false
+spamFilter: true
 
 
 # translations
