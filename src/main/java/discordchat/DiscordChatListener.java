@@ -1,7 +1,7 @@
 package discordchat;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;

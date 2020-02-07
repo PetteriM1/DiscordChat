@@ -1,7 +1,7 @@
 name: DiscordChat
 main: discordchat.Main
 version: "${pom.version}"
-api: ["2.0.0"]
+api: ["1.0.0"]
 author: PetteriM1
 description: Sync Discord chat with your Nukkit server
 website: https://nukkitx.com/resources/discordchat.137/
