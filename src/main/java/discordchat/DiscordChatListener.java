@@ -58,7 +58,7 @@ public class DiscordChatListener extends ListenerAdapter {
         String role = "";
         if (getRole(e.getMember()) != null) role = " \u00A7f| " + getRole(getRole(e.getMember()));
         if (!Main.config.getBoolean("enableDiscordToMinecraft")) return;
-        String name = e.getMember().getEffectiveName();
+        String name = TextFormat.clean(e.getMember().getEffectiveName());
         if (Main.config.getBoolean("spamFilter")) {
             if (message.equals(lastMessage) && name.equals(lastName)) return;
             lastMessage = message;
