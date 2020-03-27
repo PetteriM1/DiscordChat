@@ -44,7 +44,7 @@ public class PlayerListener implements Listener {
                 if (msg.equals(lastMessage) && name.equals(lastName)) return;
                 lastMessage = msg;
                 lastName = name;
-                msg = msg.replace("<@@!", "").replace("<!@", "").replace("<@&", "").replace("<@", "").replace("@here", "here").replace("@everyone", "everyone");
+                msg = msg.replace("<@@!", "").replace("<<@@", "").replace("<!@", "").replace("<@&", "").replace("<@", "").replace("@here", "here").replace("@everyone", "everyone");
             }
             API.sendMessage(TextFormat.clean(name + " \u00BB " + msg));
         }
