@@ -40,7 +40,7 @@ public class PlayerListener implements Listener {
             String msg = e.getMessage();
             String name = e.getPlayer().getName();
             if (Main.config.getBoolean("spamFilter")) {
-                if (msg.startsWith("Horion - the best minecraft bedrock utility mod - horionclient.eu | ")) return;
+                if (msg.startsWith("Horion - the best minecraft bedrock utility mod - ")) return;
                 if (msg.equals(lastMessage) && name.equals(lastName)) return;
                 lastMessage = msg;
                 lastName = name;
