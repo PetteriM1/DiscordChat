@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 4
+configVersion: 5
 
 
 # bot token
@@ -60,7 +60,17 @@ discordConsole: false
 consoleChannelId: ""
 # role required to run console commands
 consoleRole: ""
+# show server status messages in console
+consoleStatusMessages: true
 
+
+# placeholders for chat formatting
+# %username%
+# %displayname%
+# %timestamp%
+# %message%
+# %role%
+# TODO: PlaceholderAPI implementation
 
 # formatting of Discord messages shown in game
 discordToMinecraftChatFormatting: "NOT AVAILABLE YET"
@@ -88,3 +98,30 @@ commands_ip_address: "Address:"
 commands_ip_port: "Port:"
 discord_prefix: "§f[§bDiscord%role%§f]"
 err_no_perm: "Your role doesn't have permission to run console commands"
+console_status_server_start: "The server is starting up..."
+console_status_server_stop: "The server is shutting down..."
+
+
+# role colors mapping
+roleColors:
+  "99AAB5": "§f"
+  "1ABC9C": "§a"
+  "2ECC71": "§a"
+  "3498DB": "§3"
+  "9B59B6": "§5"
+  "E91E63": "§d"
+  "F1C40F": "§e"
+  "E67E22": "§6"
+  "E74C3C": "§c"
+  "95A5A6": "§7"
+  "607D8B": "§8"
+  "11806A": "§2"
+  "1F8B4C": "§2"
+  "206694": "§1"
+  "71368A": "§5"
+  "AD1457": "§d"
+  "C27C0E": "§6"
+  "A84300": "§6"
+  "992D22": "§4"
+  "979C9F": "§7"
+  "546E7A": "§8"

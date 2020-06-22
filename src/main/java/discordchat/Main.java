@@ -7,6 +7,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Main extends PluginBase {
 
     static Main instance;
@@ -16,6 +19,7 @@ public class Main extends PluginBase {
     static String consoleChannelId;
     static boolean debug;
     static DiscordCommandSender discordCommandSender;
+    static Map<String, String> roleColors;
 
     @Override
     public void onEnable() {
@@ -24,6 +28,8 @@ public class Main extends PluginBase {
         config = getConfig();
         checkAndUpdateConfig();
         debug = config.getBoolean("debug");
+        if (debug) getServer().getLogger().info("Loading role color map from config");
+        roleColors = (Map<String, String>) config.get("roleColors");
         if (debug) getServer().getLogger().info("Registering events for PlayerListener");
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
@@ -42,6 +48,7 @@ public class Main extends PluginBase {
                 consoleChannelId = config.getString("consoleChannelId");
                 if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
                 jda.addEventListener(new DiscordConsoleListener());
+                if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_start"));
             }
             if (!config.getString("botStatus").isEmpty()) {
                 if (debug) getServer().getLogger().info("Setting bot status to " + config.getString("botStatus"));
@@ -68,32 +75,119 @@ public class Main extends PluginBase {
     @Override
     public void onDisable() {
         if (config.getBoolean("stopMessages")) API.sendMessage(config.getString("status_server_stopped"));
+        if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_stop"));
         if (debug) getServer().getLogger().info("Disabling the plugin");
     }
 
     private void checkAndUpdateConfig() {
-        if (config.getInt("configVersion") != 4) {
+        if (config.getInt("configVersion") != 5) {
+            int updated = 0;
             if (config.getInt("configVersion") == 2) {
                 config.set("commandPrefix", "!");
                 config.set("consoleRole", "");
                 config.set("err_no_perm", "Your role doesn't have permission to run console commands");
-                config.set("configVersion", 4);
-                config.save();
-                config = getConfig();
-                getLogger().warning("Config file updated [2 -> 4]");
-                return;
+                config.set("consoleStatusMessages", true);
+                config.set("console_status_server_start", "The server is starting up...");
+                config.set("console_status_server_stop", "The server is shutting down...");
+                config.set("roleColors", new HashMap<String, String>() {
+                    {
+                        put("99AAB5", "§f");
+                        put("1ABC9C", "§a");
+                        put("2ECC71", "§a");
+                        put("3498DB", "§3");
+                        put("9B59B6", "§5");
+                        put("E91E63", "§d");
+                        put("F1C40F", "§e");
+                        put("E67E22", "§6");
+                        put("E74C3C", "§c");
+                        put("95A5A6", "§7");
+                        put("607D8B", "§8");
+                        put("11806A", "§2");
+                        put("1F8B4C", "§2");
+                        put("206694", "§1");
+                        put("71368A", "§5");
+                        put("AD1457", "§d");
+                        put("C27C0E", "§6");
+                        put("A84300", "§6");
+                        put("992D22", "§4");
+                        put("979C9F", "§7");
+                        put("546E7A", "§8");
+                    }
+                });
+                updated = 2;
             } else if (config.getInt("configVersion") == 3) {
                 config.set("consoleRole", "");
                 config.set("err_no_perm", "Your role doesn't have permission to run console commands");
-                config.set("configVersion", 4);
+                config.set("consoleStatusMessages", true);
+                config.set("console_status_server_start", "The server is starting up...");
+                config.set("console_status_server_stop", "The server is shutting down...");
+                config.set("roleColors", new HashMap<String, String>() {
+                    {
+                        put("99AAB5", "§f");
+                        put("1ABC9C", "§a");
+                        put("2ECC71", "§a");
+                        put("3498DB", "§3");
+                        put("9B59B6", "§5");
+                        put("E91E63", "§d");
+                        put("F1C40F", "§e");
+                        put("E67E22", "§6");
+                        put("E74C3C", "§c");
+                        put("95A5A6", "§7");
+                        put("607D8B", "§8");
+                        put("11806A", "§2");
+                        put("1F8B4C", "§2");
+                        put("206694", "§1");
+                        put("71368A", "§5");
+                        put("AD1457", "§d");
+                        put("C27C0E", "§6");
+                        put("A84300", "§6");
+                        put("992D22", "§4");
+                        put("979C9F", "§7");
+                        put("546E7A", "§8");
+                    }
+                });
+                updated = 3;
+            } else if (config.getInt("configVersion") == 4) {
+                config.set("consoleStatusMessages", true);
+                config.set("console_status_server_start", "The server is starting up...");
+                config.set("console_status_server_stop", "The server is shutting down...");
+                config.set("roleColors", new HashMap<String, String>() {
+                    {
+                        put("99AAB5", "§f");
+                        put("1ABC9C", "§a");
+                        put("2ECC71", "§a");
+                        put("3498DB", "§3");
+                        put("9B59B6", "§5");
+                        put("E91E63", "§d");
+                        put("F1C40F", "§e");
+                        put("E67E22", "§6");
+                        put("E74C3C", "§c");
+                        put("95A5A6", "§7");
+                        put("607D8B", "§8");
+                        put("11806A", "§2");
+                        put("1F8B4C", "§2");
+                        put("206694", "§1");
+                        put("71368A", "§5");
+                        put("AD1457", "§d");
+                        put("C27C0E", "§6");
+                        put("A84300", "§6");
+                        put("992D22", "§4");
+                        put("979C9F", "§7");
+                        put("546E7A", "§8");
+                    }
+                });
+                updated = 4;
+            } else {
+                saveResource("config.yml", true);
+                config = getConfig();
+                getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
+            }
+            if (updated > 1) {
+                config.set("configVersion", 5);
                 config.save();
                 config = getConfig();
-                getLogger().warning("Config file updated [3 -> 4]");
-                return;
+                getLogger().warning("Config file updated [" + updated + " -> 5]");
             }
-            saveResource("config.yml", true);
-            config = getConfig();
-            getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
         }
     }
 }

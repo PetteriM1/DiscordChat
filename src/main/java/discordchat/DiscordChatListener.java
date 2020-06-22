@@ -8,39 +8,9 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringJoiner;
 
 public class DiscordChatListener extends ListenerAdapter {
-
-    @SuppressWarnings("serial")
-    private static final Map<String, String> colors = new HashMap<String, String>()
-    {
-        {
-            put("99AAB5", "\u00A7f");
-            put("1ABC9C", "\u00A7a");
-            put("2ECC71", "\u00A7a");
-            put("3498DB", "\u00A73");
-            put("9B59B6", "\u00A75");
-            put("E91E63", "\u00A7d");
-            put("F1C40F", "\u00A7e");
-            put("E67E22", "\u00A76");
-            put("E74C3C", "\u00A7c");
-            put("95A5A6", "\u00A77");
-            put("607D8B", "\u00A78");
-            put("11806A", "\u00A72");
-            put("1F8B4C", "\u00A72");
-            put("206694", "\u00A71");
-            put("71368A", "\u00A75");
-            put("AD1457", "\u00A7d");
-            put("C27C0E", "\u00A76");
-            put("A84300", "\u00A76");
-            put("992D22", "\u00A74");
-            put("979C9F", "\u00A77");
-            put("546E7A", "\u00A78");
-        }
-    };
 
     private String lastMessage;
     private String lastName;
@@ -63,6 +33,7 @@ public class DiscordChatListener extends ListenerAdapter {
             if (message.equals(lastMessage) && name.equals(lastName)) return;
             lastMessage = message;
             lastName = name;
+            message = message.replaceAll("\\r\\n|\\r|\\n", " ");
         }
         if (Main.config.getBoolean("enableMessagesToConsole")) {
             Server.getInstance().broadcastMessage(Main.config.getString("discord_prefix").replace("%role%", role) + ' ' + name + " \u00BB " + message);
@@ -107,6 +78,6 @@ public class DiscordChatListener extends ListenerAdapter {
         if (role == null) return "";
         String hex = role.getColor() != null ? Integer.toHexString(role.getColor().getRGB()).toUpperCase() : "99AAB5";
         if (hex.length() == 8) hex = hex.substring(2);
-        return colors.get(hex) + role.getName();
+        return Main.roleColors.get(hex) + role.getName();
     }
 }
