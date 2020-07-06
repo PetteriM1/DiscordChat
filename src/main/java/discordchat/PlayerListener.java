@@ -25,12 +25,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (Main.config.getBoolean("quitMessages")) API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
+        if (Main.config.getBoolean("quitMessages")) API.sendMessage(Main.config.getString("info_player_left").replace("%join_message%", e.getJoinMessage()).replace("%player%", e.getPlayer().getName()));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
-        if (Main.config.getBoolean("deathMessages")) API.sendMessage(Main.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
+        if (Main.config.getBoolean("deathMessages")) API.sendMessage(Main.config.getString("info_player_death").replace("%leave_message%", e.getLeaveMessage()).replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
