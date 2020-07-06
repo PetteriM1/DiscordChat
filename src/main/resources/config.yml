@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 5
+configVersion: 6
 
 
 # bot token
@@ -86,10 +86,12 @@ allowBotMessages: false
 spamFilter: true
 
 
-# translations
+# Translations
 status_server_started: "**:white_check_mark: Server started!**"
 status_server_stopped: "**:x: Server stopped!**"
+# Available Placeholder: %join_message%
 info_player_joined: "**:heavy_plus_sign: %player% joined the server**"
+# Available Placeholder: %quit_message%
 info_player_left: "**:heavy_minus_sign: %player% left the server**"
 info_player_death: "**:skull: %death_message%**"
 command_playerlist_empty: "**No online players**"
