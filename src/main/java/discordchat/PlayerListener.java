@@ -17,13 +17,13 @@ public class PlayerListener implements Listener {
     private String lastMessage;
     private String lastName;
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerJoinEvent e) {
         if (Main.config.getBoolean("joinMessages")) API.sendMessage(Main.config.getString("info_player_joined").replace("%join_message%", TextFormat.clean(textFromContainer(e.getJoinMessage()).replace("%player%", e.getPlayer().getName()))));
 
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onQuit(PlayerQuitEvent e) {
         if (Main.config.getBoolean("quitMessages")) API.sendMessage(Main.config.getString("info_player_left").replace("%quit_message%", TextFormat.clean(textFromContainer(e.getQuitMessage()).replace("%player%", e.getPlayer().getName()))));
     }
