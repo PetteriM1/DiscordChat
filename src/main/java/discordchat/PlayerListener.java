@@ -25,7 +25,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (Main.config.getBoolean("quitMessages")) API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
+        if (Main.config.getBoolean("quitMessages") && e.getPlayer().spawned) {
+            API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
