@@ -19,14 +19,13 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Main.config.getBoolean("joinMessages")) API.sendMessage(Main.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()));
-
+        if (Main.config.getBoolean("joinMessages")) API.sendMessage(Main.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()).replace("%join_message%", TextFormat.clean(textFromContainer(e.getJoinMessage()))));
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         if (Main.config.getBoolean("quitMessages") && e.getPlayer().spawned) {
-            API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()));
+            API.sendMessage(Main.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()).replace("%quit_message%", TextFormat.clean(textFromContainer(e.getQuitMessage()))));
         }
     }
 
