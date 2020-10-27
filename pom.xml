@@ -72,7 +72,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.1.1_101</version>
+            <version>4.2.0_168</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>

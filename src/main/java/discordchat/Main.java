@@ -34,7 +34,7 @@ public class Main extends PluginBase {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
             if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "null"));
-            jda = new JDABuilder(config.getString("botToken")).build();
+            jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getServer().getLogger().info("Waiting JDA...");
             jda.awaitReady();
             if (debug) getServer().getLogger().info("Setting server channel id to " + config.getString("channelId", "null"));
