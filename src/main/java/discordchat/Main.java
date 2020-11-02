@@ -33,7 +33,7 @@ public class Main extends PluginBase {
         if (debug) getServer().getLogger().info("Registering events for PlayerListener");
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
-            if (debug) getServer().getLogger().info("Logging in with bot token " + config.getString("botToken", "null"));
+            if (debug) getServer().getLogger().info("Logging in...");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getServer().getLogger().info("Waiting JDA...");
             jda.awaitReady();
