@@ -1,35 +1,133 @@
+# config version, do not edit
+configVersion: 6
+
+
 # bot token
 botToken: ""
-# chat channel id
+# Discord server chat channel id
 channelId: ""
 
-# enable debug
+
+# enable debug messages
 debug: false
 
-# enable bot status
-# Playing _________
-enableBotStatus: true
+
+# set bot Playing ______ status, leave empty to disable
 botStatus: "Minecraft"
 
-# enable !playerlist command on discord
-playerListCommand: true
-# enable !ip command on discord
-ipCommand: true
-serverIp: "play.example.com"
-serverPort: "19132"
 
-# enable join messages to discord
+# set text channel topic, leave empty to disable
+channelTopic: "Powered by DiscordChat for Nukkit"
+
+
+# enable !playerlist command on Discord
+playerListCommand: true
+# enable !ip command on Discord
+ipCommand: true
+# enable /discord command in game
+discordCommand: true
+# server address to show in !ip command
+serverIp: "play.example.com"
+# server port to show in !ip command
+serverPort: "19132"
+# /discord command output
+discordCommandOutput: "Join our Discord server at §e<put your invite here>§f!"
+
+
+# enable join messages to Discord
 joinMessages: true
-# enable quit messages to discord
+# enable quit messages to Discord
 quitMessages: true
-# enable death messages to discord
+# enable death messages to Discord
 deathMessages: true
-# enable server start messages to discord
+# enable server start messages to Discord
 startMessages: true
-# enable server stop messages to discord
+# enable server stop messages to Discord
 stopMessages: true
 
-# discord messages to minecraft
+
+# enable Discord messages to Minecraft
 enableDiscordToMinecraft: true
-# minecraft messages to discord
+# enable Minecraft messages to Discord
 enableMinecraftToDiscord: true
+# show Discord messages also in console
+enableMessagesToConsole: false
+
+
+# prefix of discord commands
+commandPrefix: "!"
+
+
+# enable Discord console
+discordConsole: false
+# Discord server console channel id
+consoleChannelId: ""
+# role required to run console commands
+consoleRole: ""
+# show server status messages in console
+consoleStatusMessages: true
+
+
+# placeholders for chat formatting
+# %username%
+# %displayname%
+# %discordname%
+# %timestamp%
+# %message%
+# %role%
+# TODO: PlaceholderAPI implementation
+
+# formatting of Discord messages shown in game
+discordToMinecraftChatFormatting: "§f[§bDiscord §f| %role%§f] %discordname% » %message%"
+# formatting of game messages shown in Discord
+minecraftToDiscordChatFormatting: "%username% » %message%"
+
+
+# Discord messages over that length will be cut
+maxMessageLength: 255
+# allow massages sent by a bot to show in game
+allowBotMessages: false
+# enable spam filter (beta)
+spamFilter: true
+
+
+# translations
+status_server_started: "**:white_check_mark: Server started!**"
+status_server_stopped: "**:x: Server stopped!**"
+# for in-game join message use %join_message%
+info_player_joined: "**:heavy_plus_sign: %player% joined the server**"
+# for in-game quit message use %quit_message%
+info_player_left: "**:heavy_minus_sign: %player% left the server**"
+info_player_death: "**:skull: %death_message%**"
+command_playerlist_empty: "**No online players**"
+command_playerlist_players: "Online players"
+commands_ip_address: "Address:"
+commands_ip_port: "Port:"
+err_no_perm: "You don't have permission to run console commands"
+console_status_server_start: "The server is starting up..."
+console_status_server_stop: "The server is shutting down..."
+
+
+# role colors mapping
+roleColors:
+  "99AAB5": "§f"
+  "1ABC9C": "§a"
+  "2ECC71": "§a"
+  "3498DB": "§3"
+  "9B59B6": "§5"
+  "E91E63": "§d"
+  "F1C40F": "§e"
+  "E67E22": "§6"
+  "E74C3C": "§c"
+  "95A5A6": "§7"
+  "607D8B": "§8"
+  "11806A": "§2"
+  "1F8B4C": "§2"
+  "206694": "§1"
+  "71368A": "§5"
+  "AD1457": "§d"
+  "C27C0E": "§6"
+  "A84300": "§6"
+  "992D22": "§4"
+  "979C9F": "§7"
+  "546E7A": "§8"
