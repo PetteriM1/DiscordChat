@@ -1,4 +1,4 @@
-package discordchat;
+package me.petterim1.discordchat;
 
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.lang.TextContainer;

@@ -1,5 +1,7 @@
-package discordchat;
+package me.petterim1.discordchat;
 
+import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import net.dv8tion.jda.api.JDA;
@@ -10,9 +12,9 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Main extends PluginBase {
+public class Loader extends PluginBase {
 
-    static Main instance;
+    static Loader instance;
     static Config config;
     static JDA jda;
     static String channelId;
@@ -33,7 +35,7 @@ public class Main extends PluginBase {
         if (debug) getServer().getLogger().info("Registering events for PlayerListener");
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
-            if (debug) getServer().getLogger().info("Logging in...");
+            if (debug) getServer().getLogger().info("Logging in to Discord...");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getServer().getLogger().info("Waiting JDA...");
             jda.awaitReady();
@@ -80,12 +82,12 @@ public class Main extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        if (config.getInt("configVersion") != 5) {
+        if (config.getInt("configVersion") != 6) {
             int updated = 0;
             if (config.getInt("configVersion") == 2) {
                 config.set("commandPrefix", "!");
                 config.set("consoleRole", "");
-                config.set("err_no_perm", "Your role doesn't have permission to run console commands");
+                config.set("err_no_perm", "You don't have permission to run console commands");
                 config.set("consoleStatusMessages", true);
                 config.set("console_status_server_start", "The server is starting up...");
                 config.set("console_status_server_stop", "The server is shutting down...");
@@ -114,10 +116,14 @@ public class Main extends PluginBase {
                         put("546E7A", "§8");
                     }
                 });
+                config.set("discordCommand", false);
+                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
+                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
+                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
                 updated = 2;
             } else if (config.getInt("configVersion") == 3) {
                 config.set("consoleRole", "");
-                config.set("err_no_perm", "Your role doesn't have permission to run console commands");
+                config.set("err_no_perm", "You don't have permission to run console commands");
                 config.set("consoleStatusMessages", true);
                 config.set("console_status_server_start", "The server is starting up...");
                 config.set("console_status_server_stop", "The server is shutting down...");
@@ -146,6 +152,10 @@ public class Main extends PluginBase {
                         put("546E7A", "§8");
                     }
                 });
+                config.set("discordCommand", false);
+                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
+                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
+                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
                 updated = 3;
             } else if (config.getInt("configVersion") == 4) {
                 config.set("consoleStatusMessages", true);
@@ -176,18 +186,37 @@ public class Main extends PluginBase {
                         put("546E7A", "§8");
                     }
                 });
+                config.set("discordCommand", false);
+                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
+                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
+                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
                 updated = 4;
+            } else if (config.getInt("configVersion") == 5) {
+                config.set("discordCommand", false);
+                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
+                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
+                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
+                updated = 5;
             } else {
                 saveResource("config.yml", true);
                 config = getConfig();
                 getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
             }
             if (updated > 1) {
-                config.set("configVersion", 5);
+                config.set("configVersion", 6);
                 config.save();
                 config = getConfig();
-                getLogger().warning("Config file updated [" + updated + " -> 5]");
+                getLogger().warning("Config file updated [" + updated + " -> 6]");
             }
         }
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (config.getBoolean("discordCommand") && command.getName().equalsIgnoreCase("discord")) {
+            sender.sendMessage(config.getString("discordCommandOutput"));
+            return true;
+        }
+        return false;
     }
 }

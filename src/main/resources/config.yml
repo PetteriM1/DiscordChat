@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 5
+configVersion: 6
 
 
 # bot token
@@ -24,10 +24,14 @@ channelTopic: "Powered by DiscordChat for Nukkit"
 playerListCommand: true
 # enable !ip command on Discord
 ipCommand: true
+# enable /discord command in game
+discordCommand: true
 # server address to show in !ip command
 serverIp: "play.example.com"
 # server port to show in !ip command
 serverPort: "19132"
+# /discord command output
+discordCommandOutput: "Join our Discord server at §e<put your invite here>§f!"
 
 
 # enable join messages to Discord
@@ -67,15 +71,16 @@ consoleStatusMessages: true
 # placeholders for chat formatting
 # %username%
 # %displayname%
+# %discordname%
 # %timestamp%
 # %message%
 # %role%
 # TODO: PlaceholderAPI implementation
 
 # formatting of Discord messages shown in game
-discordToMinecraftChatFormatting: "NOT AVAILABLE YET"
+discordToMinecraftChatFormatting: "§f[§bDiscord §f| %role%§f] %discordname% » %message%"
 # formatting of game messages shown in Discord
-minecraftToDiscordChatFormatting: "NOT AVAILABLE YET"
+minecraftToDiscordChatFormatting: "%username% » %message%"
 
 
 # Discord messages over that length will be cut
@@ -89,15 +94,16 @@ spamFilter: true
 # translations
 status_server_started: "**:white_check_mark: Server started!**"
 status_server_stopped: "**:x: Server stopped!**"
+# for in-game join message use %join_message%
 info_player_joined: "**:heavy_plus_sign: %player% joined the server**"
+# for in-game quit message use %quit_message%
 info_player_left: "**:heavy_minus_sign: %player% left the server**"
 info_player_death: "**:skull: %death_message%**"
 command_playerlist_empty: "**No online players**"
 command_playerlist_players: "Online players"
 commands_ip_address: "Address:"
 commands_ip_port: "Port:"
-discord_prefix: "§f[§bDiscord%role%§f]"
-err_no_perm: "Your role doesn't have permission to run console commands"
+err_no_perm: "You don't have permission to run console commands"
 console_status_server_start: "The server is starting up..."
 console_status_server_stop: "The server is shutting down..."
 
