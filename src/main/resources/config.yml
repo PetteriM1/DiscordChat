@@ -17,7 +17,7 @@ botStatus: "Minecraft"
 
 
 # set text channel topic, leave empty to disable
-channelTopic: "Powered by DiscordChat for Nukkit"
+channelTopic: "Powered by DiscordChat for Cloudburst"
 
 
 # enable !playerlist command on Discord

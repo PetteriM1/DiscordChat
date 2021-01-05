@@ -1,19 +1,35 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
-import cn.nukkit.plugin.PluginBase;
-import cn.nukkit.utils.Config;
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.cloudburstmc.server.Server;
+import org.cloudburstmc.server.event.Listener;
+import org.cloudburstmc.server.event.server.ServerShutdownEvent;
+import org.cloudburstmc.server.event.server.ServerStartEvent;
+import org.cloudburstmc.server.plugin.Plugin;
+import org.cloudburstmc.server.plugin.PluginDescription;
+import org.cloudburstmc.server.utils.Config;
+import org.slf4j.Logger;
 
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Map;
 
-public class Loader extends PluginBase {
+@Plugin(id = "me.petterim1.discordchat",
+        name = "DiscordChat",
+        version = "2.0.cloudburst.bleeding.1",
+        description = "Sync Discord chat with your Cloudburst server",
+        url = "https://cloudburstmc.org/resources/discordchat.137/",
+        authors = "PetteriM1")
+public class Loader {
 
+    static Logger logger;
     static Loader instance;
     static Config config;
     static JDA jda;
@@ -23,65 +39,97 @@ public class Loader extends PluginBase {
     static DiscordCommandSender discordCommandSender;
     static Map<String, String> roleColors;
 
-    @Override
-    public void onEnable() {
-        instance = this;
-        saveDefaultConfig();
-        config = getConfig();
-        checkAndUpdateConfig();
-        debug = config.getBoolean("debug");
-        if (debug) getServer().getLogger().info("Loading role color map from config");
-        roleColors = (Map<String, String>) config.get("roleColors");
-        if (debug) getServer().getLogger().info("Registering events for PlayerListener");
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+    @Inject
+    private Loader(Logger logger, PluginDescription description, Path dataFolder, Server server) {
+        Loader.logger = logger;
         try {
-            if (debug) getServer().getLogger().info("Logging in to Discord...");
+            dataFolder.toFile().mkdirs();
+            File file = new File(dataFolder + "/config.yml");
+            if (!file.isFile()) {
+                InputStream stream = null;
+                OutputStream resStreamOut = null;
+                try {
+                    stream = Loader.class.getResourceAsStream("/config.yml");
+                    int readBytes;
+                    byte[] buffer = new byte[1024];
+                    resStreamOut = new FileOutputStream(dataFolder + "/config.yml");
+                    while ((readBytes = stream.read(buffer)) > 0) {
+                        resStreamOut.write(buffer, 0, readBytes);
+                    }
+                } catch (Exception ex) {
+                    logger.error("Failed to save config.yml", ex);
+                } finally {
+                    try {
+                        stream.close();
+                        resStreamOut.close();
+                    } catch (Exception ex) {
+                        logger.error("Error", ex);
+                    }
+                }
+            }
+            config = new Config(dataFolder + "/config.yml", Config.YAML);
+        } catch (Exception ex) {
+            logger.error("Failed to load config.yml", ex);
+        }
+    }
+
+    @Listener
+    public void onStart(ServerStartEvent event) {
+        instance = this;
+        debug = config.getBoolean("debug");
+        if (debug) logger.info("Loading role color map from config");
+        roleColors = (Map<String, String>) config.get("roleColors");
+        if (debug) logger.info("Registering events for PlayerListener");
+        Server.getInstance().getEventManager().registerListeners(this, new PlayerListener());
+        try {
+            if (debug) logger.info("Logging in to Discord...");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
-            if (debug) getServer().getLogger().info("Waiting JDA...");
+            if (debug) logger.info("Waiting JDA...");
             jda.awaitReady();
-            if (debug) getServer().getLogger().info("Setting server channel id to " + config.getString("channelId", "null"));
+            if (debug) logger.info("Setting server channel id to " + config.getString("channelId", "null"));
             channelId = config.getString("channelId");
-            if (debug) getServer().getLogger().info("Registering events for DiscordListener");
+            if (debug) logger.info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordChatListener());
             if (config.getBoolean("discordConsole")) {
-                if (debug) getServer().getLogger().info("Creating new DiscordCommandSender");
+                if (debug) logger.info("Creating new DiscordCommandSender");
                 discordCommandSender = new DiscordCommandSender();
-                if (debug) getServer().getLogger().info("Setting console channel id to " + config.getString("consoleChannelId", "null"));
+                if (debug) logger.info("Setting console channel id to " + config.getString("consoleChannelId", "null"));
                 consoleChannelId = config.getString("consoleChannelId");
-                if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
+                if (debug) logger.info("Registering events for DiscordConsole");
                 jda.addEventListener(new DiscordConsoleListener());
                 if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_start"));
             }
             if (!config.getString("botStatus").isEmpty()) {
-                if (debug) getServer().getLogger().info("Setting bot status to " + config.getString("botStatus"));
+                if (debug) logger.info("Setting bot status to " + config.getString("botStatus"));
                 jda.getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, config.getString("botStatus")));
             }
             if (!config.getString("channelTopic").isEmpty()) {
-                if (debug) getServer().getLogger().info("Setting channel topic to " + config.getString("channelTopic"));
+                if (debug) logger.info("Setting channel topic to " + config.getString("channelTopic"));
                 TextChannel ch = jda.getTextChannelById(channelId);
                 if (ch != null) {
                     ch.getManager().setTopic(config.getString("channelTopic")).queue();
                 } else if (debug) {
-                    getLogger().error("TextChannel is null");
+                    logger.error("TextChannel is null");
                 }
             }
-            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not on any server");
-            if (debug) getServer().getLogger().info("Startup done successfully");
+            if (debug && jda.getGuilds().isEmpty()) logger.warn("Your Discord bot is not on any server");
+            if (debug) logger.info("Startup done successfully");
         } catch (Exception e) {
-            getLogger().error("Couldn't enable Discord chat sync");
+            logger.error("Couldn't enable Discord chat sync");
             if (debug) e.printStackTrace();
         }
         if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
     }
 
-    @Override
-    public void onDisable() {
+    @Listener
+    public void onShutdown(ServerShutdownEvent event) {
         if (config.getBoolean("stopMessages")) API.sendMessage(config.getString("status_server_stopped"));
         if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_stop"));
-        if (debug) getServer().getLogger().info("Disabling the plugin");
+        if (debug) logger.info("Disabling the plugin");
     }
 
-    private void checkAndUpdateConfig() {
+    // TODO: Rewrite something similar
+    /*private void checkAndUpdateConfig() {
         if (config.getInt("configVersion") != 6) {
             int updated = 0;
             if (config.getInt("configVersion") == 2) {
@@ -200,23 +248,24 @@ public class Loader extends PluginBase {
             } else {
                 saveResource("config.yml", true);
                 config = getConfig();
-                getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
+                logger.warn("Outdated config file replaced. You will need to set your settings again.");
             }
             if (updated > 1) {
                 config.set("configVersion", 6);
                 config.save();
-                config = getConfig();
-                getLogger().warning("Config file updated [" + updated + " -> 6]");
+                config.reload();
+                logger.warn("Config file updated [" + updated + " -> 6]");
             }
         }
-    }
+    }*/
 
-    @Override
+    // TODO: Port this code for Cloudburst
+    /*@Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (config.getBoolean("discordCommand") && command.getName().equalsIgnoreCase("discord")) {
             sender.sendMessage(config.getString("discordCommandOutput"));
             return true;
         }
         return false;
-    }
+    }*/
 }

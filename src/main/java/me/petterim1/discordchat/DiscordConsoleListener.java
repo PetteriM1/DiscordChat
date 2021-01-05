@@ -1,10 +1,10 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.Server;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.cloudburstmc.server.Server;
 
 public class DiscordConsoleListener extends ListenerAdapter {
 

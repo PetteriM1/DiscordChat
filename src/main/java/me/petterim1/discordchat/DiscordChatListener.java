@@ -1,12 +1,12 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.utils.TextFormat;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.cloudburstmc.server.Server;
+import org.cloudburstmc.server.player.Player;
+import org.cloudburstmc.server.utils.TextFormat;
 
 import java.util.Date;
 import java.util.StringJoiner;

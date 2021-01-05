@@ -1,39 +1,38 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.event.EventHandler;
-import cn.nukkit.event.EventPriority;
-import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerDeathEvent;
-import cn.nukkit.event.player.PlayerJoinEvent;
-import cn.nukkit.event.player.PlayerQuitEvent;
-import cn.nukkit.utils.TextFormat;
+import org.cloudburstmc.server.event.EventPriority;
+import org.cloudburstmc.server.event.Listener;
+import org.cloudburstmc.server.event.player.PlayerChatEvent;
+import org.cloudburstmc.server.event.player.PlayerDeathEvent;
+import org.cloudburstmc.server.event.player.PlayerJoinEvent;
+import org.cloudburstmc.server.event.player.PlayerQuitEvent;
+import org.cloudburstmc.server.utils.TextFormat;
 
 import java.util.Date;
 
-public class PlayerListener implements Listener {
+public class PlayerListener {
 
     private String lastMessage;
     private String lastName;
 
-    @EventHandler
+    @Listener
     public void onJoin(PlayerJoinEvent e) {
         if (Loader.config.getBoolean("joinMessages")) API.sendMessage(Loader.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()).replace("%join_message%", TextFormat.clean(API.textFromContainer(e.getJoinMessage()))));
     }
 
-    @EventHandler
+    @Listener
     public void onQuit(PlayerQuitEvent e) {
         if (Loader.config.getBoolean("quitMessages") && e.getPlayer().spawned) {
             API.sendMessage(Loader.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()).replace("%quit_message%", TextFormat.clean(API.textFromContainer(e.getQuitMessage()))));
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @Listener(ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
         if (Loader.config.getBoolean("deathMessages")) API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(API.textFromContainer(e.getDeathMessage()))));
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @Listener(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
         if (!Loader.config.getBoolean("enableMinecraftToDiscord")) return;
         String message = e.getMessage();

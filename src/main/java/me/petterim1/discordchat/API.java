@@ -1,9 +1,9 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.Server;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.cloudburstmc.server.Server;
+import org.cloudburstmc.server.locale.TextContainer;
+import org.cloudburstmc.server.locale.TranslationContainer;
 
 public class API {
 
@@ -13,10 +13,10 @@ public class API {
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel is null");
+                Loader.logger.error("TextChannel is null");
             }
         } else if (Loader.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+            Loader.logger.error("JDA is null");
         }
     }
 
@@ -26,16 +26,16 @@ public class API {
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel for console is null");
+                Loader.logger.error("TextChannel for console is null");
             }
         } else if (Loader.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+            Loader.logger.error("JDA is null");
         }
     }
 
     public static String textFromContainer(TextContainer container) {
         if (container instanceof TranslationContainer) {
-            return Server.getInstance().getLanguage().translateString(container.getText(), ((TranslationContainer) container).getParameters());
+            return Server.getInstance().getLanguage().translate(container.getText(), ((TranslationContainer) container).getParameters());
         }
         return container.getText();
     }

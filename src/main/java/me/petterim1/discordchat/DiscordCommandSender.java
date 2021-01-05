@@ -1,8 +1,8 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.command.ConsoleCommandSender;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.utils.TextFormat;
+import org.cloudburstmc.server.command.ConsoleCommandSender;
+import org.cloudburstmc.server.locale.TextContainer;
+import org.cloudburstmc.server.utils.TextFormat;
 
 public class DiscordCommandSender extends ConsoleCommandSender {
 
