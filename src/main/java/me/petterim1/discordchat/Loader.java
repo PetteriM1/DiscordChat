@@ -29,12 +29,13 @@ public class Loader extends PluginBase {
         saveDefaultConfig();
         config = getConfig();
         checkAndUpdateConfig();
-        debug = config.getBoolean("debug");
-        if (debug) getServer().getLogger().info("Loading role color map from config");
-        roleColors = (Map<String, String>) config.get("roleColors");
-        if (debug) getServer().getLogger().info("Registering events for PlayerListener");
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         try {
+            debug = config.getBoolean("debug");
+            if (debug) getServer().getLogger().notice("Running DiscordChat in debug mode");
+            if (debug) getServer().getLogger().info("Loading role color map from config");
+            roleColors = (Map<String, String>) config.get("roleColors");
+            if (debug) getServer().getLogger().info("Registering events for PlayerListener");
+            getServer().getPluginManager().registerEvents(new PlayerListener(), this);
             if (debug) getServer().getLogger().info("Logging in to Discord...");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getServer().getLogger().info("Waiting JDA...");
@@ -66,18 +67,18 @@ public class Loader extends PluginBase {
                 }
             }
             if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not on any server");
+            if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
             if (debug) getServer().getLogger().info("Startup done successfully");
         } catch (Exception e) {
-            getLogger().error("Couldn't enable Discord chat sync");
+            getLogger().error("Couldn't enable DiscordChat. Enable debug mode for more info.");
             if (debug) e.printStackTrace();
         }
-        if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
     }
 
     @Override
     public void onDisable() {
         if (config.getBoolean("stopMessages")) API.sendMessage(config.getString("status_server_stopped"));
-        if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_stop"));
+        if (config.getBoolean("consoleStatusMessages") && config.getBoolean("discordConsole")) API.sendToConsole(config.getString("console_status_server_stop"));
         if (debug) getServer().getLogger().info("Disabling the plugin");
     }
 

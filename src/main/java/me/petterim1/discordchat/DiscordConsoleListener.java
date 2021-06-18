@@ -11,7 +11,7 @@ public class DiscordConsoleListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         if (!Loader.config.getBoolean("discordConsole")) return;
-        if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Loader.jda == null || Loader.jda.getSelfUser() == null || Loader.jda.getSelfUser().getId() == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
+        if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
         if (!e.getChannel().getId().equals(Loader.consoleChannelId)) return;
         String message = e.getMessage().getContentStripped();
         if (message.length() > 1 && message.startsWith(Loader.config.getString("commandPrefix"))) {

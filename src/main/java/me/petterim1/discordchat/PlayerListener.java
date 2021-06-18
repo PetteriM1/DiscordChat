@@ -13,9 +13,6 @@ import java.util.Date;
 
 public class PlayerListener implements Listener {
 
-    private String lastMessage;
-    private String lastName;
-
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         if (Loader.config.getBoolean("joinMessages")) API.sendMessage(Loader.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()).replace("%join_message%", TextFormat.clean(API.textFromContainer(e.getJoinMessage()))));
@@ -39,10 +36,6 @@ public class PlayerListener implements Listener {
         String message = e.getMessage();
         String name = e.getPlayer().getName();
         if (Loader.config.getBoolean("spamFilter")) {
-            if (message.startsWith("Horion - the best minecraft bedrock utility mod - ")) return;
-            if (message.equals(lastMessage) && name.equals(lastName)) return;
-            lastMessage = message;
-            lastName = name;
             message = message.replace("@", "[at]");
         }
         API.sendMessage(TextFormat.clean(Loader.config.getString("minecraftToDiscordChatFormatting")).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%username%", name).replace("%displayname%", e.getPlayer().getDisplayName()).replace("%message%", message));

@@ -9,31 +9,27 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 public class DiscordChatListener extends ListenerAdapter {
 
-    private static String lastMessage;
-    private static String lastName;
-
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
-        if (e.getAuthor() == null || e.getMember() == null || e.getAuthor().getId() == null || Loader.jda == null || Loader.jda.getSelfUser() == null || Loader.jda.getSelfUser().getId() == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
+        if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
         if (!e.getChannel().getId().equals(Loader.channelId)) return;
         if (e.getAuthor().isBot() && !Loader.config.getBoolean("allowBotMessages")) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
         if (message.isEmpty()) return;
-        if (processPlayerListCommand(message)) return;
+        if (processDiscordCommand(message.toLowerCase())) return;
         if (!Loader.config.getBoolean("enableDiscordToMinecraft")) return;
         if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
         if (message.length() > Loader.config.getInt("maxMessageLength")) message = message.substring(0, Loader.config.getInt("maxMessageLength"));
-        String name = TextFormat.clean(e.getMember().getEffectiveName()).replace("§", "?").replace("%message%", "?");
         if (Loader.config.getBoolean("spamFilter")) {
-            if (message.equals(lastMessage) && name.equals(lastName)) return;
-            lastMessage = message;
-            lastName = name;
             message = message.replaceAll("\\r\\n|\\r|\\n", " ");
         }
+        String name = TextFormat.clean(e.getMember().getEffectiveName()).replace("§", "?").replace("%message%", "?");
         String role = "";
         if (getRole(e.getMember()) != null) role = getRole(getRole(e.getMember()));
         String out = Loader.config.getString("discordToMinecraftChatFormatting").replace("%role%", role).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%discordname%", name).replace("%message%", message);
@@ -46,16 +42,17 @@ public class DiscordChatListener extends ListenerAdapter {
         }
     }
 
-     private boolean processPlayerListCommand(String message) {
-        if (message.equalsIgnoreCase(Loader.config.getString("commandPrefix") + "playerlist") && Loader.config.getBoolean("playerListCommand")) {
-            if (Server.getInstance().getOnlinePlayers().isEmpty()) {
+     private boolean processDiscordCommand(String message) {
+        if (message.equals(Loader.config.getString("commandPrefix") + "playerlist") && Loader.config.getBoolean("playerListCommand")) {
+            Map<UUID, Player> playerList = Server.getInstance().getOnlinePlayers();
+            if (playerList.isEmpty()) {
                 API.sendMessage(Loader.config.getString("command_playerlist_empty"));
             } else {
                 String playerListMessage = "";
-                playerListMessage += "**" + Loader.config.getString("command_playerlist_players") + " (" + Server.getInstance().getOnlinePlayers().size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
+                playerListMessage += "**" + Loader.config.getString("command_playerlist_players") + " (" + playerList.size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
                 playerListMessage += "\n```\n";
                 StringJoiner players = new StringJoiner(", ");
-                for (Player player : Server.getInstance().getOnlinePlayers().values()) {
+                for (Player player : playerList.values()) {
                     players.add(player.getName());
                 }
                 playerListMessage += players.toString();
@@ -64,7 +61,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 API.sendMessage(playerListMessage);
             }
             return true;
-        } else if (message.equalsIgnoreCase(Loader.config.getString("commandPrefix") + "ip") && Loader.config.getBoolean("ipCommand")) {
+        } else if (message.equals(Loader.config.getString("commandPrefix") + "ip") && Loader.config.getBoolean("ipCommand")) {
             API.sendMessage("```\n" + Loader.config.getString("commands_ip_address") + ' ' + Loader.config.getString("serverIp") + '\n' + Loader.config.getString("commands_ip_port") + ' ' + Loader.config.getString("serverPort") + "\n```");
             return true;
         }
