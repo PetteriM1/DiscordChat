@@ -22,7 +22,7 @@ public class DiscordChatListener extends ListenerAdapter {
         if (e.getAuthor().isBot() && !Loader.config.getBoolean("allowBotMessages")) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
         if (message.isEmpty()) return;
-        if (processDiscordCommand(message.toLowerCase())) return;
+        if (processDiscordCommand(message)) return;
         if (!Loader.config.getBoolean("enableDiscordToMinecraft")) return;
         if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
         if (message.length() > Loader.config.getInt("maxMessageLength")) message = message.substring(0, Loader.config.getInt("maxMessageLength"));
@@ -43,7 +43,7 @@ public class DiscordChatListener extends ListenerAdapter {
     }
 
      private boolean processDiscordCommand(String message) {
-        if (message.equals(Loader.config.getString("commandPrefix") + "playerlist") && Loader.config.getBoolean("playerListCommand")) {
+        if (message.equalsIgnoreCase(Loader.config.getString("commandPrefix") + "playerlist") && Loader.config.getBoolean("playerListCommand")) {
             Map<UUID, Player> playerList = Server.getInstance().getOnlinePlayers();
             if (playerList.isEmpty()) {
                 API.sendMessage(Loader.config.getString("command_playerlist_empty"));
@@ -61,7 +61,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 API.sendMessage(playerListMessage);
             }
             return true;
-        } else if (message.equals(Loader.config.getString("commandPrefix") + "ip") && Loader.config.getBoolean("ipCommand")) {
+        } else if (message.equalsIgnoreCase(Loader.config.getString("commandPrefix") + "ip") && Loader.config.getBoolean("ipCommand")) {
             API.sendMessage("```\n" + Loader.config.getString("commands_ip_address") + ' ' + Loader.config.getString("serverIp") + '\n' + Loader.config.getString("commands_ip_port") + ' ' + Loader.config.getString("serverPort") + "\n```");
             return true;
         }
