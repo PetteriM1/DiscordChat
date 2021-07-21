@@ -8,12 +8,16 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class API {
 
     public static void sendMessage(String message) {
+        sendMessage(Loader.channelId, message);
+    }
+
+    public static void sendMessage(String channelId, String message) {
         if (Loader.jda != null) {
-            TextChannel channel = Loader.jda.getTextChannelById(Loader.channelId);
+            TextChannel channel = Loader.jda.getTextChannelById(channelId);
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel is null");
+                Server.getInstance().getLogger().error("TextChannel is null: " + channelId);
             }
         } else if (Loader.debug) {
             Server.getInstance().getLogger().error("JDA is null");
@@ -26,7 +30,7 @@ public class API {
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel for console is null");
+                Server.getInstance().getLogger().error("TextChannel for console is null: " + Loader.consoleChannelId);
             }
         } else if (Loader.debug) {
             Server.getInstance().getLogger().error("JDA is null");
