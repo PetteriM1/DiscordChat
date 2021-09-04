@@ -4,7 +4,7 @@ version: "${pom.version}"
 api: ["1.0.0"]
 author: PetteriM1
 description: Sync Discord chat with your Nukkit server
-website: https://nukkitx.com/resources/discordchat.137/
+website: https://cloudburstmc.org/resources/discordchat.137/
 commands:
   discord:
     description: "Show the Discord invite link"

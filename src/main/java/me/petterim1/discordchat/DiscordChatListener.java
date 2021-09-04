@@ -8,16 +8,18 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 public class DiscordChatListener extends ListenerAdapter {
+
+    static final List<DiscordChatReceiver> receivers = new ArrayList<>();
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
         if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
+        for (DiscordChatReceiver receiver : receivers) {
+            receiver.receive(e);
+        }
         if (!e.getChannel().getId().equals(Loader.channelId)) return;
         if (e.getAuthor().isBot() && !Loader.config.getBoolean("allowBotMessages")) return;
         String message = TextFormat.clean(e.getMessage().getContentStripped());
@@ -31,7 +33,7 @@ public class DiscordChatListener extends ListenerAdapter {
         }
         String name = TextFormat.clean(e.getMember().getEffectiveName()).replace("§", "?").replace("%message%", "?");
         String role = "";
-        if (getRole(e.getMember()) != null) role = getRole(getRole(e.getMember()));
+        if (getRole(e.getMember()) != null) role = getColoredRole(getRole(e.getMember()));
         String out = Loader.config.getString("discordToMinecraftChatFormatting").replace("%role%", role).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%discordname%", name).replace("%message%", message);
         if (Loader.config.getBoolean("enableMessagesToConsole")) {
             Server.getInstance().broadcastMessage(out);
@@ -42,8 +44,9 @@ public class DiscordChatListener extends ListenerAdapter {
         }
     }
 
-     private boolean processDiscordCommand(String message) {
-        if (message.equalsIgnoreCase(Loader.config.getString("commandPrefix") + "playerlist") && Loader.config.getBoolean("playerListCommand")) {
+     private boolean processDiscordCommand(String m) {
+        String prefix = Loader.config.getString("commandPrefix");
+        if (Loader.config.getBoolean("playerListCommand") && m.equalsIgnoreCase(prefix + "playerlist")) {
             Map<UUID, Player> playerList = Server.getInstance().getOnlinePlayers();
             if (playerList.isEmpty()) {
                 API.sendMessage(Loader.config.getString("command_playerlist_empty"));
@@ -61,24 +64,24 @@ public class DiscordChatListener extends ListenerAdapter {
                 API.sendMessage(playerListMessage);
             }
             return true;
-        } else if (message.equalsIgnoreCase(Loader.config.getString("commandPrefix") + "ip") && Loader.config.getBoolean("ipCommand")) {
+        } else if (Loader.config.getBoolean("ipCommand") && m.equalsIgnoreCase(prefix + "ip")) {
             API.sendMessage("```\n" + Loader.config.getString("commands_ip_address") + ' ' + Loader.config.getString("serverIp") + '\n' + Loader.config.getString("commands_ip_port") + ' ' + Loader.config.getString("serverPort") + "\n```");
             return true;
         }
         return false;
     }
 
-    private Role getRole(Member m) {
+    private static Role getRole(Member m) {
         for (Role role : m.getRoles()) {
             return role;
         }
         return null;
     }
 
-    private String getRole(Role role) {
-        if (role == null) return "";
-        String hex = role.getColor() != null ? Integer.toHexString(role.getColor().getRGB()).toUpperCase() : "99AAB5";
+    private static String getColoredRole(Role r) {
+        if (r == null) return "";
+        String hex = r.getColor() != null ? Integer.toHexString(r.getColor().getRGB()).toUpperCase() : "99AAB5";
         if (hex.length() == 8) hex = hex.substring(2);
-        return Loader.roleColors.get(hex) + role.getName();
+        return Loader.roleColors.get(hex) + r.getName();
     }
 }

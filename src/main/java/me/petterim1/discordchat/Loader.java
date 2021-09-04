@@ -7,7 +7,6 @@ import cn.nukkit.utils.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,11 +33,14 @@ public class Loader extends PluginBase {
             if (debug) getServer().getLogger().notice("Running DiscordChat in debug mode");
             if (debug) getServer().getLogger().info("Loading role color map from config");
             roleColors = (Map<String, String>) config.get("roleColors");
+            if (!roleColors.containsKey("F47FFF")) {
+                roleColors.put("F47FFF", "§d");
+            }
             if (debug) getServer().getLogger().info("Registering events for PlayerListener");
             getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-            if (debug) getServer().getLogger().info("Logging in to Discord...");
+            if (debug) getServer().getLogger().info("Logging in to Discord");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
-            if (debug) getServer().getLogger().info("Waiting JDA...");
+            if (debug) getServer().getLogger().info("Waiting JDA");
             jda.awaitReady();
             if (debug) getServer().getLogger().info("Setting server channel id to " + config.getString("channelId", "null"));
             channelId = config.getString("channelId");
@@ -59,19 +61,13 @@ public class Loader extends PluginBase {
             }
             if (!config.getString("channelTopic").isEmpty()) {
                 if (debug) getServer().getLogger().info("Setting channel topic to " + config.getString("channelTopic"));
-                TextChannel ch = jda.getTextChannelById(channelId);
-                if (ch != null) {
-                    ch.getManager().setTopic(config.getString("channelTopic")).queue();
-                } else if (debug) {
-                    getLogger().error("TextChannel is null");
-                }
+                API.setTopic(config.getString("channelTopic"));
             }
-            if (debug && jda.getGuilds().isEmpty()) getServer().getLogger().warning("Your Discord bot is not on any server");
+            if (jda.getGuilds().isEmpty()) getServer().getLogger().notice("Your Discord bot is not on any server. See https://cloudburstmc.org/resources/discordchat.137/ if you need help with the setup.");
             if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
             if (debug) getServer().getLogger().info("Startup done successfully");
         } catch (Exception e) {
-            getLogger().error("Couldn't enable DiscordChat. Enable debug mode for more info.");
-            if (debug) e.printStackTrace();
+            getLogger().error("There was an error while enabling DiscordChat", e);
         }
     }
 
@@ -80,141 +76,81 @@ public class Loader extends PluginBase {
         if (config.getBoolean("stopMessages")) API.sendMessage(config.getString("status_server_stopped"));
         if (config.getBoolean("consoleStatusMessages") && config.getBoolean("discordConsole")) API.sendToConsole(config.getString("console_status_server_stop"));
         if (debug) getServer().getLogger().info("Disabling the plugin");
+        if (jda != null) {
+            jda.shutdown();
+            if (debug) getServer().getLogger().info("JDA shutdown called");
+        }
     }
 
     private void checkAndUpdateConfig() {
-        if (config.getInt("configVersion") != 6) {
-            int updated = 0;
-            if (config.getInt("configVersion") == 2) {
-                config.set("commandPrefix", "!");
-                config.set("consoleRole", "");
-                config.set("err_no_perm", "You don't have permission to run console commands");
-                config.set("consoleStatusMessages", true);
-                config.set("console_status_server_start", "The server is starting up...");
-                config.set("console_status_server_stop", "The server is shutting down...");
-                config.set("roleColors", new HashMap<String, String>() {
-                    {
-                        put("99AAB5", "§f");
-                        put("1ABC9C", "§a");
-                        put("2ECC71", "§a");
-                        put("3498DB", "§3");
-                        put("9B59B6", "§5");
-                        put("E91E63", "§d");
-                        put("F1C40F", "§e");
-                        put("E67E22", "§6");
-                        put("E74C3C", "§c");
-                        put("95A5A6", "§7");
-                        put("607D8B", "§8");
-                        put("11806A", "§2");
-                        put("1F8B4C", "§2");
-                        put("206694", "§1");
-                        put("71368A", "§5");
-                        put("AD1457", "§d");
-                        put("C27C0E", "§6");
-                        put("A84300", "§6");
-                        put("992D22", "§4");
-                        put("979C9F", "§7");
-                        put("546E7A", "§8");
-                    }
-                });
-                config.set("discordCommand", false);
-                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
-                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
-                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
-                updated = 2;
-            } else if (config.getInt("configVersion") == 3) {
-                config.set("consoleRole", "");
-                config.set("err_no_perm", "You don't have permission to run console commands");
-                config.set("consoleStatusMessages", true);
-                config.set("console_status_server_start", "The server is starting up...");
-                config.set("console_status_server_stop", "The server is shutting down...");
-                config.set("roleColors", new HashMap<String, String>() {
-                    {
-                        put("99AAB5", "§f");
-                        put("1ABC9C", "§a");
-                        put("2ECC71", "§a");
-                        put("3498DB", "§3");
-                        put("9B59B6", "§5");
-                        put("E91E63", "§d");
-                        put("F1C40F", "§e");
-                        put("E67E22", "§6");
-                        put("E74C3C", "§c");
-                        put("95A5A6", "§7");
-                        put("607D8B", "§8");
-                        put("11806A", "§2");
-                        put("1F8B4C", "§2");
-                        put("206694", "§1");
-                        put("71368A", "§5");
-                        put("AD1457", "§d");
-                        put("C27C0E", "§6");
-                        put("A84300", "§6");
-                        put("992D22", "§4");
-                        put("979C9F", "§7");
-                        put("546E7A", "§8");
-                    }
-                });
-                config.set("discordCommand", false);
-                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
-                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
-                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
-                updated = 3;
-            } else if (config.getInt("configVersion") == 4) {
-                config.set("consoleStatusMessages", true);
-                config.set("console_status_server_start", "The server is starting up...");
-                config.set("console_status_server_stop", "The server is shutting down...");
-                config.set("roleColors", new HashMap<String, String>() {
-                    {
-                        put("99AAB5", "§f");
-                        put("1ABC9C", "§a");
-                        put("2ECC71", "§a");
-                        put("3498DB", "§3");
-                        put("9B59B6", "§5");
-                        put("E91E63", "§d");
-                        put("F1C40F", "§e");
-                        put("E67E22", "§6");
-                        put("E74C3C", "§c");
-                        put("95A5A6", "§7");
-                        put("607D8B", "§8");
-                        put("11806A", "§2");
-                        put("1F8B4C", "§2");
-                        put("206694", "§1");
-                        put("71368A", "§5");
-                        put("AD1457", "§d");
-                        put("C27C0E", "§6");
-                        put("A84300", "§6");
-                        put("992D22", "§4");
-                        put("979C9F", "§7");
-                        put("546E7A", "§8");
-                    }
-                });
-                config.set("discordCommand", false);
-                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
-                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
-                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
-                updated = 4;
-            } else if (config.getInt("configVersion") == 5) {
-                config.set("discordCommand", false);
-                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
-                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
-                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
-                updated = 5;
-            } else {
+        int current = 6;
+        int ver = config.getInt("configVersion");
+        if (ver != current) {
+            if (ver < 2) {
                 saveResource("config.yml", true);
                 config = getConfig();
                 getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
+                return;
             }
-            if (updated > 1) {
-                config.set("configVersion", 6);
-                config.save();
-                config = getConfig();
-                getLogger().warning("Config file updated [" + updated + " -> 6]");
+
+            if (ver < 6) {
+                config.set("discordCommand", false);
+                config.set("discordCommandOutput", "Join our Discord server at §e<put your invite here>§f!");
+                config.set("discordToMinecraftChatFormatting", "§f[§bDiscord §f| %role%§f] %discordname% » %message%");
+                config.set("minecraftToDiscordChatFormatting", "%username% » %message%");
             }
+
+            if (ver < 5) {
+                config.set("consoleStatusMessages", true);
+                config.set("console_status_server_start", "The server is starting up...");
+                config.set("console_status_server_stop", "The server is shutting down...");
+                config.set("roleColors", new HashMap<String, String>() {
+                    {
+                        put("99AAB5", "§f");
+                        put("1ABC9C", "§a");
+                        put("2ECC71", "§a");
+                        put("3498DB", "§3");
+                        put("9B59B6", "§5");
+                        put("E91E63", "§d");
+                        put("F1C40F", "§e");
+                        put("E67E22", "§6");
+                        put("E74C3C", "§c");
+                        put("95A5A6", "§7");
+                        put("607D8B", "§8");
+                        put("11806A", "§2");
+                        put("1F8B4C", "§2");
+                        put("206694", "§1");
+                        put("71368A", "§5");
+                        put("AD1457", "§d");
+                        put("F47FFF", "§d");
+                        put("C27C0E", "§6");
+                        put("A84300", "§6");
+                        put("992D22", "§4");
+                        put("979C9F", "§7");
+                        put("546E7A", "§8");
+                    }
+                });
+            }
+
+            if (ver < 4) {
+                config.set("consoleRole", "");
+                config.set("err_no_perm", "You don't have permission to run console commands");
+            }
+
+            if (ver < 3) {
+                config.set("commandPrefix", "!");
+            }
+
+            config.set("configVersion", current);
+            config.save();
+            config = getConfig();
+            getLogger().warning("Config file updated");
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (config.getBoolean("discordCommand") && command.getName().equalsIgnoreCase("discord")) {
+        if (config.getBoolean("discordCommand") && command.getName().equals("discord")) {
             sender.sendMessage(config.getString("discordCommandOutput"));
             return true;
         }
