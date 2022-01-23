@@ -45,13 +45,15 @@ public class Loader extends PluginBase {
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getLogger().info("Waiting JDA");
             jda.awaitReady();
-            if (debug) getLogger().info("Setting server channel id to " + (channelId = config.getString("channelId", "null")));
+            channelId = config.getString("channelId", "null");
+            if (debug) getLogger().info("Setting server channel id to " + channelId);
             if (debug) getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordChatListener());
             if (config.getBoolean("discordConsole")) {
                 if (debug) getLogger().info("Creating new DiscordCommandSender");
                 discordCommandSender = new DiscordCommandSender();
-                if (debug) getLogger().info("Setting console channel id to " + (consoleChannelId = config.getString("consoleChannelId", "null")));
+                consoleChannelId = config.getString("consoleChannelId", "null");
+                if (debug) getLogger().info("Setting console channel id to " + consoleChannelId);
                 if (debug) getLogger().info("Registering events for DiscordConsole");
                 jda.addEventListener(new DiscordConsoleListener());
                 if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_start"));
