@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 6
+configVersion: 7
 
 
 # bot token
@@ -89,6 +89,8 @@ maxMessageLength: 255
 allowBotMessages: false
 # enable spam filter (beta)
 spamFilter: true
+# put sent messages in queue to avoid Discord chat getting delayed when lots of messages are being sent (recommended)
+queueMessages: true
 
 
 # translations

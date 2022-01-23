@@ -21,6 +21,7 @@ public class Loader extends PluginBase {
     static boolean debug;
     static DiscordCommandSender discordCommandSender;
     static Map<String, String> roleColors;
+    static boolean queueMessages;
 
     @Override
     public void onEnable() {
@@ -34,6 +35,7 @@ public class Loader extends PluginBase {
             if (debug) getServer().getLogger().info("Loading role color map from config");
             roleColors = (Map<String, String>) config.get("roleColors");
             if (!roleColors.containsKey("F47FFF")) {
+                if (debug) getServer().getLogger().info("Adding missing default color to role color map");
                 roleColors.put("F47FFF", "§d");
             }
             if (debug) getServer().getLogger().info("Registering events for PlayerListener");
@@ -42,15 +44,13 @@ public class Loader extends PluginBase {
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getServer().getLogger().info("Waiting JDA");
             jda.awaitReady();
-            if (debug) getServer().getLogger().info("Setting server channel id to " + config.getString("channelId", "null"));
-            channelId = config.getString("channelId");
+            if (debug) getServer().getLogger().info("Setting server channel id to " + (channelId = config.getString("channelId", "null")));
             if (debug) getServer().getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordChatListener());
             if (config.getBoolean("discordConsole")) {
                 if (debug) getServer().getLogger().info("Creating new DiscordCommandSender");
                 discordCommandSender = new DiscordCommandSender();
-                if (debug) getServer().getLogger().info("Setting console channel id to " + config.getString("consoleChannelId", "null"));
-                consoleChannelId = config.getString("consoleChannelId");
+                if (debug) getServer().getLogger().info("Setting console channel id to " + (consoleChannelId = config.getString("consoleChannelId", "null")));
                 if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
                 jda.addEventListener(new DiscordConsoleListener());
                 if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_start"));
@@ -62,6 +62,11 @@ public class Loader extends PluginBase {
             if (!config.getString("channelTopic").isEmpty()) {
                 if (debug) getServer().getLogger().info("Setting channel topic to " + config.getString("channelTopic"));
                 API.setTopic(config.getString("channelTopic"));
+            }
+            //noinspection AssignmentUsedAsCondition
+            if (queueMessages = config.getBoolean("queueMessages")) {
+                if (debug) getServer().getLogger().info("Starting message queue");
+                getServer().getScheduler().scheduleDelayedRepeatingTask(this, new MessageQueue(), 5, 5, true);
             }
             if (jda.getGuilds().isEmpty()) getServer().getLogger().notice("Your Discord bot is not on any server. See https://cloudburstmc.org/resources/discordchat.137/ if you need help with the setup.");
             if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
@@ -83,7 +88,7 @@ public class Loader extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        int current = 6;
+        int current = 7;
         int ver = config.getInt("configVersion");
         if (ver != current) {
             if (ver < 2) {
@@ -91,6 +96,10 @@ public class Loader extends PluginBase {
                 config = getConfig();
                 getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
                 return;
+            }
+
+            if (ver < 7) {
+                config.set("queueMessages", true);
             }
 
             if (ver < 6) {
@@ -144,7 +153,7 @@ public class Loader extends PluginBase {
             config.set("configVersion", current);
             config.save();
             config = getConfig();
-            getLogger().warning("Config file updated");
+            getLogger().warning("Config file updated to version " + current);
         }
     }
 

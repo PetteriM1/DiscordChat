@@ -4,6 +4,8 @@ import cn.nukkit.Server;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class API {
 
@@ -12,7 +14,12 @@ public class API {
      * @param message Message
      */
     public static void sendMessage(String message) {
-        sendMessage(Loader.channelId, message);
+        if (message == null) throw new RuntimeException("Message cannot be null");
+        if (Loader.queueMessages) {
+            MessageQueue.defaultChat.add(message);
+        } else {
+            sendMessageInternal(Loader.channelId, message);
+        }
     }
 
     /**
@@ -20,16 +27,20 @@ public class API {
      * @param channelId Channel ID
      * @param message Message
      */
+    @SuppressWarnings("unused")
     public static void sendMessage(String channelId, String message) {
-        if (Loader.jda != null) {
-            TextChannel channel = Loader.jda.getTextChannelById(channelId);
-            if (channel != null) {
-                channel.sendMessage(message).queue();
-            } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel is null: " + channelId);
+        if (message == null) throw new RuntimeException("Message cannot be null");
+        if (Loader.queueMessages) {
+            Queue<String> channel = MessageQueue.customChat.get(channelId);
+            if (channel == null) {
+                channel = new ConcurrentLinkedQueue<>();
+                channel.add(message);
+                MessageQueue.customChat.put(channelId, channel);
+            } else {
+                channel.add(message);
             }
-        } else if (Loader.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+        } else {
+            sendMessageInternal(channelId, message);
         }
     }
 
@@ -38,12 +49,26 @@ public class API {
      * @param message Message
      */
     public static void sendToConsole(String message) {
+        if (message == null) throw new RuntimeException("Message cannot be null");
+        if (Loader.queueMessages) {
+            MessageQueue.console.add(message);
+        } else {
+            sendMessageInternal(Loader.consoleChannelId, message);
+        }
+    }
+
+    /**
+     * Internal: Directly send message to a given channel on Discord.
+     * @param channelId Channel ID
+     * @param message Message
+     */
+    static void sendMessageInternal(String channelId, String message) {
         if (Loader.jda != null) {
-            TextChannel channel = Loader.jda.getTextChannelById(Loader.consoleChannelId);
+            TextChannel channel = Loader.jda.getTextChannelById(channelId);
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel for console is null: " + Loader.consoleChannelId);
+                Server.getInstance().getLogger().error("TextChannel is null: " + channelId);
             }
         } else if (Loader.debug) {
             Server.getInstance().getLogger().error("JDA is null");

@@ -18,7 +18,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Loader.config.getBoolean("joinMessages")) API.sendMessage(Loader.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()).replace("%join_message%", TextFormat.clean(textFromContainer(e.getJoinMessage()))));
+        if (Loader.config.getBoolean("joinMessages")) {
+            API.sendMessage(Loader.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()).replace("%join_message%", TextFormat.clean(textFromContainer(e.getJoinMessage()))));
+        }
     }
 
     @EventHandler
@@ -30,16 +32,24 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
-        if (Loader.config.getBoolean("deathMessages")) API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
+        if (Loader.config.getBoolean("deathMessages")) {
+            if (Loader.config.getBoolean("spamFilter")) {
+                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()).replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "").replace("discord.gg", ""))));
+            } else {
+                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChat(PlayerChatEvent e) {
-        if (!Loader.config.getBoolean("enableMinecraftToDiscord")) return;
+        if (!Loader.config.getBoolean("enableMinecraftToDiscord")) {
+            return;
+        }
         String message = e.getMessage();
         String name = e.getPlayer().getName();
         if (Loader.config.getBoolean("spamFilter")) {
-            message = message.replace("@", "[at]");
+            message = message.replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "");
         }
         API.sendMessage(TextFormat.clean(Loader.config.getString("minecraftToDiscordChatFormatting")).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%username%", name).replace("%displayname%", e.getPlayer().getDisplayName()).replace("%message%", message));
     }
