@@ -22,6 +22,7 @@ public class Loader extends PluginBase {
     static DiscordCommandSender discordCommandSender;
     static Map<String, String> roleColors;
     static boolean queueMessages;
+    static MessageQueue queue;
 
     @Override
     public void onEnable() {
@@ -31,46 +32,46 @@ public class Loader extends PluginBase {
         checkAndUpdateConfig();
         try {
             debug = config.getBoolean("debug");
-            if (debug) getServer().getLogger().notice("Running DiscordChat in debug mode");
-            if (debug) getServer().getLogger().info("Loading role color map from config");
+            if (debug) getLogger().notice("Running DiscordChat in debug mode");
+            if (debug) getLogger().info("Loading role color map from config");
             roleColors = (Map<String, String>) config.get("roleColors");
             if (!roleColors.containsKey("F47FFF")) {
-                if (debug) getServer().getLogger().info("Adding missing default color to role color map");
+                if (debug) getLogger().info("Adding missing default color to role color map");
                 roleColors.put("F47FFF", "§d");
             }
-            if (debug) getServer().getLogger().info("Registering events for PlayerListener");
+            if (debug) getLogger().info("Registering events for PlayerListener");
             getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-            if (debug) getServer().getLogger().info("Logging in to Discord");
+            if (debug) getLogger().info("Logging in to Discord");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
-            if (debug) getServer().getLogger().info("Waiting JDA");
+            if (debug) getLogger().info("Waiting JDA");
             jda.awaitReady();
-            if (debug) getServer().getLogger().info("Setting server channel id to " + (channelId = config.getString("channelId", "null")));
-            if (debug) getServer().getLogger().info("Registering events for DiscordListener");
+            if (debug) getLogger().info("Setting server channel id to " + (channelId = config.getString("channelId", "null")));
+            if (debug) getLogger().info("Registering events for DiscordListener");
             jda.addEventListener(new DiscordChatListener());
             if (config.getBoolean("discordConsole")) {
-                if (debug) getServer().getLogger().info("Creating new DiscordCommandSender");
+                if (debug) getLogger().info("Creating new DiscordCommandSender");
                 discordCommandSender = new DiscordCommandSender();
-                if (debug) getServer().getLogger().info("Setting console channel id to " + (consoleChannelId = config.getString("consoleChannelId", "null")));
-                if (debug) getServer().getLogger().info("Registering events for DiscordConsole");
+                if (debug) getLogger().info("Setting console channel id to " + (consoleChannelId = config.getString("consoleChannelId", "null")));
+                if (debug) getLogger().info("Registering events for DiscordConsole");
                 jda.addEventListener(new DiscordConsoleListener());
                 if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_start"));
             }
             if (!config.getString("botStatus").isEmpty()) {
-                if (debug) getServer().getLogger().info("Setting bot status to " + config.getString("botStatus"));
+                if (debug) getLogger().info("Setting bot status to " + config.getString("botStatus"));
                 jda.getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, config.getString("botStatus")));
             }
             if (!config.getString("channelTopic").isEmpty()) {
-                if (debug) getServer().getLogger().info("Setting channel topic to " + config.getString("channelTopic"));
+                if (debug) getLogger().info("Setting channel topic to " + config.getString("channelTopic"));
                 API.setTopic(config.getString("channelTopic"));
             }
             //noinspection AssignmentUsedAsCondition
             if (queueMessages = config.getBoolean("queueMessages")) {
-                if (debug) getServer().getLogger().info("Starting message queue");
-                getServer().getScheduler().scheduleDelayedRepeatingTask(this, new MessageQueue(), 5, 5, true);
+                if (debug) getLogger().info("Starting message queue");
+                getServer().getScheduler().scheduleDelayedRepeatingTask(this, queue = new MessageQueue(), 5, 5, true);
             }
-            if (jda.getGuilds().isEmpty()) getServer().getLogger().notice("Your Discord bot is not on any server. See https://cloudburstmc.org/resources/discordchat.137/ if you need help with the setup.");
+            if (jda.getGuilds().isEmpty()) getLogger().notice("Your Discord bot is not on any server. See https://cloudburstmc.org/resources/discordchat.137/ if you need help with the setup.");
             if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
-            if (debug) getServer().getLogger().info("Startup done successfully");
+            if (debug) getLogger().info("Startup done successfully");
         } catch (Exception e) {
             getLogger().error("There was an error while enabling DiscordChat", e);
         }
@@ -80,10 +81,14 @@ public class Loader extends PluginBase {
     public void onDisable() {
         if (config.getBoolean("stopMessages")) API.sendMessage(config.getString("status_server_stopped"));
         if (config.getBoolean("consoleStatusMessages") && config.getBoolean("discordConsole")) API.sendToConsole(config.getString("console_status_server_stop"));
-        if (debug) getServer().getLogger().info("Disabling the plugin");
+        if (debug) getLogger().info("Disabling the plugin");
         if (jda != null) {
+            if (queue != null) {
+                if (debug) getLogger().info("Sending previously queued messages");
+                queue.run();
+            }
             jda.shutdown();
-            if (debug) getServer().getLogger().info("JDA shutdown called");
+            if (debug) getLogger().info("JDA shutdown called");
         }
     }
 
