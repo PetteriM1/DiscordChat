@@ -8,9 +8,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Loader extends PluginBase {
 
     static Loader instance;
@@ -19,10 +16,9 @@ public class Loader extends PluginBase {
     static String channelId;
     static String consoleChannelId;
     static boolean debug;
-    static DiscordCommandSender discordCommandSender;
-    static Map<String, String> roleColors;
     static boolean queueMessages;
     static MessageQueue queue;
+    static DiscordCommandSender discordCommandSender;
 
     @Override
     public void onEnable() {
@@ -34,11 +30,6 @@ public class Loader extends PluginBase {
             debug = config.getBoolean("debug");
             if (debug) getLogger().notice("Running DiscordChat in debug mode");
             if (debug) getLogger().info("Loading role color map from config");
-            roleColors = (Map<String, String>) config.get("roleColors");
-            if (!roleColors.containsKey("F47FFF")) {
-                if (debug) getLogger().info("Adding missing default color to role color map");
-                roleColors.put("F47FFF", "§d");
-            }
             if (debug) getLogger().info("Registering events for PlayerListener");
             getServer().getPluginManager().registerEvents(new PlayerListener(), this);
             if (debug) getLogger().info("Logging in to Discord");
@@ -69,7 +60,7 @@ public class Loader extends PluginBase {
             //noinspection AssignmentUsedAsCondition
             if (queueMessages = config.getBoolean("queueMessages")) {
                 if (debug) getLogger().info("Starting message queue");
-                getServer().getScheduler().scheduleDelayedRepeatingTask(this, queue = new MessageQueue(), 5, 5, true);
+                getServer().getScheduler().scheduleDelayedRepeatingTask(this, queue = new MessageQueue(), 20, 20, true);
             }
             if (jda.getGuilds().isEmpty()) getLogger().notice("Your Discord bot is not on any server. See https://cloudburstmc.org/resources/discordchat.137/ if you need help with the setup.");
             if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
@@ -95,7 +86,7 @@ public class Loader extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        int current = 7;
+        int current = 8;
         int ver = config.getInt("configVersion");
         if (ver != current) {
             if (ver < 2) {
@@ -103,6 +94,13 @@ public class Loader extends PluginBase {
                 config = getConfig();
                 getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
                 return;
+            }
+
+            if (ver < 8) {
+                config.set("command_mute_success", "§aDiscord chat muted");
+                config.set("command_mute_already_muted", "§cDiscord chat is already muted");
+                config.set("command_unmute_success", "§aDiscord chat is no longer muted");
+                config.set("command_unmute_not_muted", "§cDiscord chat is not muted");
             }
 
             if (ver < 7) {
@@ -120,32 +118,6 @@ public class Loader extends PluginBase {
                 config.set("consoleStatusMessages", true);
                 config.set("console_status_server_start", "The server is starting up...");
                 config.set("console_status_server_stop", "The server is shutting down...");
-                config.set("roleColors", new HashMap<String, String>() {
-                    {
-                        put("99AAB5", "§f");
-                        put("1ABC9C", "§a");
-                        put("2ECC71", "§a");
-                        put("3498DB", "§3");
-                        put("9B59B6", "§5");
-                        put("E91E63", "§d");
-                        put("F1C40F", "§e");
-                        put("E67E22", "§6");
-                        put("E74C3C", "§c");
-                        put("95A5A6", "§7");
-                        put("607D8B", "§8");
-                        put("11806A", "§2");
-                        put("1F8B4C", "§2");
-                        put("206694", "§1");
-                        put("71368A", "§5");
-                        put("AD1457", "§d");
-                        put("F47FFF", "§d");
-                        put("C27C0E", "§6");
-                        put("A84300", "§6");
-                        put("992D22", "§4");
-                        put("979C9F", "§7");
-                        put("546E7A", "§8");
-                    }
-                });
             }
 
             if (ver < 4) {
@@ -166,10 +138,6 @@ public class Loader extends PluginBase {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (config.getBoolean("discordCommand") && command.getName().equals("discord")) {
-            sender.sendMessage(config.getString("discordCommandOutput"));
-            return true;
-        }
-        return false;
+        return DiscordCommand.handleCommand(sender, command, label, args);
     }
 }

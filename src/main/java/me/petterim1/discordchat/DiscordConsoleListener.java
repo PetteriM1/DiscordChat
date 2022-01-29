@@ -5,11 +5,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class DiscordConsoleListener extends ListenerAdapter {
 
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent e) {
         if (!Loader.config.getBoolean("discordConsole")) return;
         if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
         if (!e.getChannel().getId().equals(Loader.consoleChannelId)) return;

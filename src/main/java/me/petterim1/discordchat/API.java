@@ -118,4 +118,13 @@ public class API {
     public static List<DiscordChatReceiver> getReceiversList() {
         return DiscordChatListener.receivers;
     }
+
+    /**
+     * Get all players who have muted Discord chat in game.
+     * @return Modifiable list of all players who have Discord chat muted
+     */
+    @SuppressWarnings("unused")
+    public static List<String> getDiscordChatMutedPlayers() {
+        return DiscordChatListener.chatMuted;
+    }
 }

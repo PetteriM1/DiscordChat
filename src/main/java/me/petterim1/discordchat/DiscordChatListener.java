@@ -7,15 +7,20 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DiscordChatListener extends ListenerAdapter {
 
+    static final List<String> chatMuted = new CopyOnWriteArrayList<>();
     static final List<DiscordChatReceiver> receivers = new ArrayList<>();
 
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent e) {
         if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
         for (DiscordChatReceiver receiver : receivers) {
             receiver.receive(e);
@@ -32,15 +37,15 @@ public class DiscordChatListener extends ListenerAdapter {
             message = message.replaceAll("\\r\\n|\\r|\\n", " ");
         }
         String name = TextFormat.clean(e.getMember().getEffectiveName()).replace("§", "?").replace("%message%", "?");
-        String role = "";
-        if (getRole(e.getMember()) != null) role = getColoredRole(getRole(e.getMember()));
+        String role = getColoredRole(getRole(e.getMember()));
         String out = Loader.config.getString("discordToMinecraftChatFormatting").replace("%role%", role).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%discordname%", name).replace("%message%", message);
-        if (Loader.config.getBoolean("enableMessagesToConsole")) {
-            Server.getInstance().broadcastMessage(out);
-        } else {
-            for (Player player : Server.getInstance().getOnlinePlayers().values()) {
+        for (Player player : Server.getInstance().getOnlinePlayers().values()) {
+            if (!chatMuted.contains(player.getName())) {
                 player.sendMessage(out);
             }
+        }
+        if (Loader.config.getBoolean("enableMessagesToConsole")) {
+            Server.getInstance().getLogger().info(out);
         }
     }
 
@@ -80,8 +85,59 @@ public class DiscordChatListener extends ListenerAdapter {
 
     private static String getColoredRole(Role r) {
         if (r == null) return "";
-        String hex = r.getColor() != null ? Integer.toHexString(r.getColor().getRGB()).toUpperCase() : "99AAB5";
-        if (hex.length() == 8) hex = hex.substring(2);
-        return Loader.roleColors.get(hex) + r.getName();
+        Color color = r.getColor();
+        if (color == null) {
+            return TextFormat.WHITE + r.getName();
+        } else {
+            return fromRGB(color.getRed(), color.getGreen(), color.getBlue()) + r.getName();
+        }
+    }
+
+    // Source: https://minecraft.fandom.com/wiki/Formatting_codes
+    private final static Map<TextFormat, ColorSet> COLORS = new HashMap<>();
+
+    static {
+        COLORS.put(TextFormat.BLACK, new ColorSet(0, 0, 0));
+        COLORS.put(TextFormat.DARK_BLUE, new ColorSet(0, 0, 170));
+        COLORS.put(TextFormat.DARK_GREEN, new ColorSet(0, 170, 0));
+        COLORS.put(TextFormat.DARK_AQUA, new ColorSet(0, 170, 170));
+        COLORS.put(TextFormat.DARK_RED, new ColorSet(170, 0, 0));
+        COLORS.put(TextFormat.DARK_PURPLE, new ColorSet(170, 0, 170));
+        COLORS.put(TextFormat.GOLD, new ColorSet(255, 170, 0));
+        COLORS.put(TextFormat.GRAY, new ColorSet(170, 170, 170));
+        COLORS.put(TextFormat.DARK_GRAY, new ColorSet(85, 85, 85));
+        COLORS.put(TextFormat.BLUE, new ColorSet(85, 85, 255));
+        COLORS.put(TextFormat.GREEN, new ColorSet(85, 255, 85));
+        COLORS.put(TextFormat.AQUA, new ColorSet(85, 255, 255));
+        COLORS.put(TextFormat.RED, new ColorSet(255, 85, 85));
+        COLORS.put(TextFormat.LIGHT_PURPLE, new ColorSet(255, 85, 255));
+        COLORS.put(TextFormat.YELLOW, new ColorSet(255, 255, 85));
+        COLORS.put(TextFormat.WHITE, new ColorSet(255, 255, 255));
+        COLORS.put(TextFormat.MINECOIN_GOLD, new ColorSet(221, 214, 5));
+    }
+
+    private static class ColorSet {
+
+        final int red;
+        final int green;
+        final int blue;
+
+        ColorSet(int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+        }
+    }
+
+    // Source: https://gist.github.com/mikroskeem/428f82fbf12f52f29cc6199482c77fb5
+    private static TextFormat fromRGB(int r, int g, int b) {
+        TreeMap<Integer, TextFormat> closest = new TreeMap<>();
+        COLORS.forEach((color, set) -> {
+            int red = Math.abs(r - set.red);
+            int green = Math.abs(g - set.green);
+            int blue = Math.abs(b - set.blue);
+            closest.put(red + green + blue, color);
+        });
+        return closest.firstEntry().getValue();
     }
 }

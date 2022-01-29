@@ -9,8 +9,9 @@ public class DiscordCommandSender extends ConsoleCommandSender {
     @Override
     public void sendMessage(String message) {
         message = TextFormat.clean(message);
-        if (message.isEmpty()) return;
-        API.sendToConsole(message);
+        if (!message.isEmpty()) {
+            API.sendToConsole(message);
+        }
     }
 
     @Override

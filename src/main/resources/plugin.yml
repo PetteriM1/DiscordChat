@@ -7,7 +7,8 @@ description: Sync Discord chat with your Nukkit server
 website: https://cloudburstmc.org/resources/discordchat.137/
 commands:
   discord:
-    description: "Show the Discord invite link"
+    description: "Discord"
+    usage: "/discord [mute|unmute]"
     permission: discordchat.command
 permissions:
   discordchat.command:
