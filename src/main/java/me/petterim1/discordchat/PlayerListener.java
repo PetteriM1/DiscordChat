@@ -16,21 +16,21 @@ import java.util.Date;
 
 public class PlayerListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
         if (Loader.config.getBoolean("joinMessages")) {
             API.sendMessage(Loader.config.getString("info_player_joined").replace("%player%", e.getPlayer().getName()).replace("%join_message%", TextFormat.clean(textFromContainer(e.getJoinMessage()))));
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onQuit(PlayerQuitEvent e) {
         if (Loader.config.getBoolean("quitMessages") && e.getPlayer().spawned) {
             API.sendMessage(Loader.config.getString("info_player_left").replace("%player%", e.getPlayer().getName()).replace("%quit_message%", TextFormat.clean(textFromContainer(e.getQuitMessage()))));
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
         if (Loader.config.getBoolean("deathMessages")) {
             if (Loader.config.getBoolean("spamFilter")) {
