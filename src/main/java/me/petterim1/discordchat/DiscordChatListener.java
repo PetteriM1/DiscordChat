@@ -60,8 +60,13 @@ public class DiscordChatListener extends ListenerAdapter {
                 playerListMessage += "**" + Loader.config.getString("command_playerlist_players") + " (" + playerList.size() + '/' + Server.getInstance().getMaxPlayers() + "):**";
                 playerListMessage += "\n```\n";
                 StringJoiner players = new StringJoiner(", ");
+                List<String> sorted = new ArrayList<>(playerList.size());
                 for (Player player : playerList.values()) {
-                    players.add(player.getName());
+                    sorted.add(player.getName());
+                }
+                Collections.sort(sorted);
+                for (String playerName : sorted) {
+                    players.add(playerName);
                 }
                 playerListMessage += players.toString();
                 if (playerListMessage.length() > 1996) playerListMessage = playerListMessage.substring(0, 1993) + "...";
