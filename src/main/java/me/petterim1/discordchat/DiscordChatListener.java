@@ -64,7 +64,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 for (Player player : playerList.values()) {
                     sorted.add(player.getName());
                 }
-                Collections.sort(sorted);
+                sorted.sort(String.CASE_INSENSITIVE_ORDER);
                 for (String playerName : sorted) {
                     players.add(playerName);
                 }
