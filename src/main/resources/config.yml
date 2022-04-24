@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 8
+configVersion: 9
 
 
 # bot token
@@ -112,3 +112,4 @@ command_mute_success: "§aDiscord chat muted"
 command_mute_already_muted: "§cDiscord chat is already muted"
 command_unmute_success: "§aDiscord chat is no longer muted"
 command_unmute_not_muted: "§cDiscord chat is not muted"
+command_generic_no_perm: "§cYou don't have permission to use this command"

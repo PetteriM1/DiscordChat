@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class DiscordChatListener extends ListenerAdapter {
+public class DiscordListener extends ListenerAdapter {
 
     static final List<String> chatMuted = new CopyOnWriteArrayList<>();
     static final List<DiscordChatReceiver> receivers = new ArrayList<>();

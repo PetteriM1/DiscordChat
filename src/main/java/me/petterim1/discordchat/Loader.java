@@ -17,8 +17,11 @@ public class Loader extends PluginBase {
     static String consoleChannelId;
     static boolean debug;
     static boolean queueMessages;
-    static MessageQueue queue;
-    static DiscordCommandSender discordCommandSender;
+    static MessageQueue messageQueue;
+    static final DiscordCommandSender discordCommandSender = new DiscordCommandSender();
+    private static final PlayerListener playerListener = new PlayerListener();
+    private static final DiscordListener discordListener = new DiscordListener();
+    private static final DiscordConsoleListener discordConsoleListener = new DiscordConsoleListener();
 
     @Override
     public void onEnable() {
@@ -29,24 +32,21 @@ public class Loader extends PluginBase {
         try {
             debug = config.getBoolean("debug");
             if (debug) getLogger().notice("Running DiscordChat in debug mode");
-            if (debug) getLogger().info("Loading role color map from config");
-            if (debug) getLogger().info("Registering events for PlayerListener");
-            getServer().getPluginManager().registerEvents(new PlayerListener(), this);
             if (debug) getLogger().info("Logging in to Discord");
             jda = JDABuilder.createDefault(config.getString("botToken")).build();
             if (debug) getLogger().info("Waiting JDA");
             jda.awaitReady();
+            if (debug) getLogger().info("Registering events for PlayerListener");
+            getServer().getPluginManager().registerEvents(playerListener, this);
             channelId = config.getString("channelId", "null");
             if (debug) getLogger().info("Setting server channel id to " + channelId);
             if (debug) getLogger().info("Registering events for DiscordListener");
-            jda.addEventListener(new DiscordChatListener());
+            jda.addEventListener(discordListener);
             if (config.getBoolean("discordConsole")) {
-                if (debug) getLogger().info("Creating new DiscordCommandSender");
-                discordCommandSender = new DiscordCommandSender();
                 consoleChannelId = config.getString("consoleChannelId", "null");
                 if (debug) getLogger().info("Setting console channel id to " + consoleChannelId);
-                if (debug) getLogger().info("Registering events for DiscordConsole");
-                jda.addEventListener(new DiscordConsoleListener());
+                if (debug) getLogger().info("Registering events for DiscordConsoleListener");
+                jda.addEventListener(discordConsoleListener);
                 if (config.getBoolean("consoleStatusMessages")) API.sendToConsole(config.getString("console_status_server_start"));
             }
             if (!config.getString("botStatus").isEmpty()) {
@@ -60,7 +60,7 @@ public class Loader extends PluginBase {
             //noinspection AssignmentUsedAsCondition
             if (queueMessages = config.getBoolean("queueMessages")) {
                 if (debug) getLogger().info("Starting message queue");
-                getServer().getScheduler().scheduleDelayedRepeatingTask(this, queue = new MessageQueue(), 20, 20, true);
+                getServer().getScheduler().scheduleDelayedRepeatingTask(this, messageQueue = new MessageQueue(), 20, 20, true);
             }
             if (jda.getGuilds().isEmpty()) getLogger().notice("Your Discord bot is not on any server. See https://cloudburstmc.org/resources/discordchat.137/ if you need help with the setup.");
             if (config.getBoolean("startMessages")) API.sendMessage(config.getString("status_server_started"));
@@ -76,9 +76,9 @@ public class Loader extends PluginBase {
         if (config.getBoolean("consoleStatusMessages") && config.getBoolean("discordConsole")) API.sendToConsole(config.getString("console_status_server_stop"));
         if (debug) getLogger().info("Disabling the plugin");
         if (jda != null) {
-            if (queue != null) {
+            if (messageQueue != null) {
                 if (debug) getLogger().info("Sending previously queued messages");
-                queue.run();
+                messageQueue.run();
             }
             jda.shutdown();
             if (debug) getLogger().info("JDA shutdown called");
@@ -86,7 +86,7 @@ public class Loader extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        int current = 8;
+        int current = 9;
         int ver = config.getInt("configVersion");
         if (ver != current) {
             if (ver < 2) {
@@ -94,6 +94,10 @@ public class Loader extends PluginBase {
                 config = getConfig();
                 getLogger().warning("Outdated config file replaced. You will need to set your settings again.");
                 return;
+            }
+
+            if (ver < 9) {
+                config.set("command_generic_no_perm", "§cYou don't have permission to use this command");
             }
 
             if (ver < 8) {

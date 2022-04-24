@@ -1,6 +1,5 @@
 package me.petterim1.discordchat;
 
-import cn.nukkit.Server;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.List;
@@ -68,10 +67,10 @@ public class API {
             if (channel != null) {
                 channel.sendMessage(message).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel is null: " + channelId);
+                Loader.instance.getLogger().error("TextChannel is null: " + channelId);
             }
         } else if (Loader.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+            Loader.instance.getLogger().error("JDA is null");
         }
     }
 
@@ -94,10 +93,10 @@ public class API {
             if (channel != null) {
                 channel.getManager().setTopic(topic).queue();
             } else if (Loader.debug) {
-                Server.getInstance().getLogger().error("TextChannel is null: " + channelId);
+                Loader.instance.getLogger().error("TextChannel is null: " + channelId);
             }
         } else if (Loader.debug) {
-            Server.getInstance().getLogger().error("JDA is null");
+            Loader.instance.getLogger().error("JDA is null");
         }
     }
 
@@ -107,7 +106,7 @@ public class API {
      */
     @SuppressWarnings("unused")
     public static void registerReceiver(DiscordChatReceiver receiver) {
-        DiscordChatListener.receivers.add(receiver);
+        DiscordListener.receivers.add(receiver);
     }
 
     /**
@@ -116,7 +115,7 @@ public class API {
      */
     @SuppressWarnings("unused")
     public static List<DiscordChatReceiver> getReceiversList() {
-        return DiscordChatListener.receivers;
+        return DiscordListener.receivers;
     }
 
     /**
@@ -125,6 +124,6 @@ public class API {
      */
     @SuppressWarnings("unused")
     public static List<String> getDiscordChatMutedPlayers() {
-        return DiscordChatListener.chatMuted;
+        return DiscordListener.chatMuted;
     }
 }

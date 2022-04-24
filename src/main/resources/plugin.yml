@@ -8,7 +8,7 @@ website: https://cloudburstmc.org/resources/discordchat.137/
 commands:
   discord:
     description: "Discord"
-    usage: "/discord [mute|unmute]"
+    usage: "/discord [mute|unmute|reload]"
     permission: discordchat.command
 permissions:
   discordchat.command:
