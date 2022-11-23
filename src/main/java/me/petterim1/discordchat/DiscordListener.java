@@ -27,16 +27,23 @@ public class DiscordListener extends ListenerAdapter {
         }
         if (!e.getChannel().getId().equals(Loader.channelId)) return;
         if (e.getAuthor().isBot() && !Loader.config.getBoolean("allowBotMessages")) return;
-        String message = TextFormat.clean(e.getMessage().getContentStripped());
-        if (message.isEmpty()) return;
+        String message = TextFormat.clean(e.getMessage().getContentStripped(), true);
+        if (message.trim().isEmpty()) return;
         if (processDiscordCommand(message)) return;
         if (!Loader.config.getBoolean("enableDiscordToMinecraft")) return;
-        if (message.contains("ঋ") || message.contains("ༀ") || message.contains("") || message.contains("")) return;
         if (message.length() > Loader.config.getInt("maxMessageLength")) message = message.substring(0, Loader.config.getInt("maxMessageLength"));
+        String name = TextFormat.clean(e.getMember().getEffectiveName(), true);
         if (Loader.config.getBoolean("spamFilter")) {
-            message = message.replaceAll("\\r\\n|\\r|\\n", " ");
+            message = message
+                    .replaceAll("\\r\\n|\\r|\\n", " ")
+                    .replaceAll("[\\uE000-\\uE0EA\\n]", "?")
+                    .replace("ঋ", "?").replace("ༀ", "?").replace("", "?");
+            if (message.trim().isEmpty()) return;
+            name = name
+                    .replaceAll("\\r\\n|\\r|\\n", "?")
+                    .replaceAll("[\\uE000-\\uE0EA\\n]", "?")
+                    .replace("ঋ", "?").replace("ༀ", "?").replace("", "?");
         }
-        String name = TextFormat.clean(e.getMember().getEffectiveName()).replace("§", "?").replace("%message%", "?");
         String role = getColoredRole(getRole(e.getMember()));
         String out = Loader.config.getString("discordToMinecraftChatFormatting").replace("%role%", role).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%discordname%", name).replace("%message%", message);
         for (Player player : Server.getInstance().getOnlinePlayers().values()) {
@@ -49,7 +56,7 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
 
-     private boolean processDiscordCommand(String m) {
+    private boolean processDiscordCommand(String m) {
         String prefix = Loader.config.getString("commandPrefix");
         if (Loader.config.getBoolean("playerListCommand") && m.equalsIgnoreCase(prefix + "playerlist")) {
             Map<UUID, Player> playerList = Server.getInstance().getOnlinePlayers();
