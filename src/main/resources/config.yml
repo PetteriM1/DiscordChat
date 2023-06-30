@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 9
+configVersion: 10
 
 
 # bot token
@@ -66,6 +66,8 @@ consoleChannelId: ""
 consoleRole: ""
 # show server status messages in console
 consoleStatusMessages: true
+# log Discord console commands
+logConsoleCommands: true
 
 
 # placeholders for chat formatting
@@ -89,7 +91,7 @@ maxMessageLength: 255
 allowBotMessages: false
 # enable spam filter (beta)
 spamFilter: true
-# put sent messages in queue to avoid Discord chat getting delayed when lots of messages are being sent (recommended)
+# merge sent messages to avoid Discord chat getting delayed when lots of messages are being sent (recommended)
 queueMessages: true
 
 

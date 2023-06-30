@@ -11,16 +11,27 @@ public class DiscordConsoleListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent e) {
-        if (!Loader.config.getBoolean("discordConsole")) return;
-        if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) return;
-        if (!e.getChannel().getId().equals(Loader.consoleChannelId)) return;
+        if (!Loader.config.getBoolean("discordConsole")) {
+            return;
+        }
+        if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) {
+            return;
+        }
+        if (!e.getChannel().getId().equals(Loader.consoleChannelId)) {
+            return;
+        }
         String message = e.getMessage().getContentStripped();
-        if (message.length() > 1 && message.startsWith(Loader.config.getString("commandPrefix"))) {
+        String prefix = Loader.config.getString("commandPrefix");
+        if (message.length() > prefix.length() && message.startsWith(prefix)) {
             if (!hasConsoleRole(e.getMember())) {
                 API.sendToConsole(Loader.config.getString("err_no_perm"));
                 return;
             }
-            Server.getInstance().getScheduler().scheduleTask(Loader.instance, () -> Server.getInstance().dispatchCommand(Loader.discordCommandSender, message.substring(1)));
+            String cmd = message.substring(prefix.length());
+            if (Loader.config.getBoolean("logConsoleCommands")) {
+                Loader.instance.getLogger().info(e.getMember().getEffectiveName() + " executed a console command: " + cmd);
+            }
+            Server.getInstance().getScheduler().scheduleTask(Loader.instance, () -> Server.getInstance().dispatchCommand(Loader.discordCommandSender, cmd));
         }
     }
 

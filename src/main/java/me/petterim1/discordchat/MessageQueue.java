@@ -22,15 +22,13 @@ public class MessageQueue implements Runnable {
             current.append(message).append('\n');
         }
         String send = current.toString();
-        if (send.length() > 1999) {
-            int index = 0;
-            while (send.length() > 1999) {
-                API.sendMessageInternal(Loader.consoleChannelId, send.substring(index, index + 1998));
-                index = index + 1998;
-                send = send.substring(index);
-            }
+        while (send.length() > 1999) {
+            API.sendMessageInternal(Loader.consoleChannelId, send.substring(0, 1999));
+            send = send.substring(1999);
         }
-        if (!send.isEmpty()) API.sendMessageInternal(Loader.consoleChannelId, send);
+        if (!send.isEmpty()) {
+            API.sendMessageInternal(Loader.consoleChannelId, send);
+        }
         current.setLength(0);
         while (true) {
             String message = defaultChat.poll();
@@ -40,15 +38,13 @@ public class MessageQueue implements Runnable {
             current.append(message).append('\n');
         }
         send = current.toString();
-        if (send.length() > 1999) {
-            int index = 0;
-            while (send.length() > 1999) {
-                API.sendMessageInternal(Loader.channelId, send.substring(index, index + 1998));
-                index = index + 1998;
-                send = send.substring(index);
-            }
+        while (send.length() > 1999) {
+            API.sendMessageInternal(Loader.channelId, send.substring(0, 1999));
+            send = send.substring(1999);
         }
-        if (!send.isEmpty()) API.sendMessageInternal(Loader.channelId, send);
+        if (!send.isEmpty()) {
+            API.sendMessageInternal(Loader.channelId, send);
+        }
         if (!customChat.isEmpty()) {
             StringBuilder currentChannel = new StringBuilder();
             customChat.forEach((channel, queue) -> {
@@ -60,15 +56,13 @@ public class MessageQueue implements Runnable {
                     currentChannel.append(message).append('\n');
                 }
                 String currentSend = currentChannel.toString();
-                if (currentSend.length() > 1999) {
-                    int index = 0;
-                    while (currentSend.length() > 1999) {
-                        API.sendMessageInternal(channel, currentSend.substring(index, index + 1998));
-                        index = index + 1998;
-                        currentSend = currentSend.substring(index);
-                    }
+                while (currentSend.length() > 1999) {
+                    API.sendMessageInternal(channel, currentSend.substring(0, 1999));
+                    currentSend = currentSend.substring(1999);
                 }
-                if (!currentSend.isEmpty()) API.sendMessageInternal(channel, currentSend);
+                if (!currentSend.isEmpty()) {
+                    API.sendMessageInternal(channel, currentSend);
+                }
             });
         }
     }

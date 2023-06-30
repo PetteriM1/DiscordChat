@@ -32,7 +32,9 @@ public class DiscordCommand {
                     if (sender.isOp()) {
                         try {
                             if (Loader.jda != null) {
-                                if (Loader.debug) Loader.instance.getLogger().info("Shutting down old JDA instance");
+                                if (Loader.debug) {
+                                    Loader.instance.getLogger().info("Shutting down old JDA instance");
+                                }
                                 Loader.jda.shutdownNow();
                             }
                             Loader.instance.onEnable();
