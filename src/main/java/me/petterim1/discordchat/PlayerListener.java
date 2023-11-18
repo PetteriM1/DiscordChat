@@ -33,10 +33,14 @@ public class PlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
         if (Loader.config.getBoolean("deathMessages")) {
+            String msg = TextFormat.clean(textFromContainer(e.getDeathMessage()));
+            if (msg.isEmpty()) {
+                return;
+            }
             if (Loader.config.getBoolean("spamFilter")) {
-                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()).replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "").replace("discord.gg", ""))));
+                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg.replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "").replace("discord.gg", "")));
             } else {
-                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", TextFormat.clean(textFromContainer(e.getDeathMessage()))));
+                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg));
             }
         }
     }
