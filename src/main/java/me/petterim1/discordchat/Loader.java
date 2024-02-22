@@ -130,7 +130,7 @@ public class Loader extends PluginBase {
         int ver = config.getInt("configVersion");
         if (ver != current) {
             if (debug) {
-                getLogger().info("DEBUG: Attempting to update config to version " + current);
+                getLogger().info("DEBUG: Attempting to update config version " + ver + " to " + current);
             }
 
             if (ver < 2) {
