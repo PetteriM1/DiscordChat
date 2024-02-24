@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class API {
@@ -148,7 +149,7 @@ public class API {
      * @return Modifiable list of all players who have Discord chat muted
      */
     @SuppressWarnings("unused")
-    public static List<String> getDiscordChatMutedPlayers() {
+    public static Set<String> getDiscordChatMutedPlayers() {
         return DiscordListener.chatMuted;
     }
 

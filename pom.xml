@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.petterim1.discordchat</groupId>
     <artifactId>DiscordChat</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1.dev</version>
     <build>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
         <plugins>
