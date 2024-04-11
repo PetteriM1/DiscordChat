@@ -38,7 +38,7 @@ public class PlayerListener implements Listener {
                 return;
             }
             if (Loader.config.getBoolean("spamFilter")) {
-                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg.replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "").replace("discord.gg", "")));
+                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg.replace("@", "[at]").replaceAll("(?i)https:", "<Redacted>").replaceAll("(?i)http:", "<Redacted>")));
             } else {
                 API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg));
             }
