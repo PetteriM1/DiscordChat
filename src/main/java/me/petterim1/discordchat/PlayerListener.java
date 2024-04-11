@@ -53,7 +53,7 @@ public class PlayerListener implements Listener {
         String message = e.getMessage();
         String name = e.getPlayer().getName();
         if (Loader.config.getBoolean("spamFilter")) {
-            message = message.replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "");
+            message = message.replace("@", "[at]").replaceAll("(?i)https:", "<Redacted>").replaceAll("(?i)http:", "<Redacted>");
         }
         API.sendMessage(TextFormat.clean(Loader.config.getString("minecraftToDiscordChatFormatting")).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%username%", name).replace("%displayname%", e.getPlayer().getDisplayName()).replace("%message%", message));
     }
