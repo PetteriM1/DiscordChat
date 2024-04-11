@@ -38,7 +38,7 @@ public class PlayerListener implements Listener {
                 return;
             }
             if (Loader.config.getBoolean("spamFilter")) {
-                API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg.replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "").replace("discord.gg", "")));
+                API.sendMessage(Loader.config.getString("info_player_death").replace("@", "[at]").replaceAll("(?i)https:", "<Redacted>").replaceAll("(?i)http:", "<Redacted>").replace("discord.gg", "<Redacted>").replace("discordapp.com", "<Redacted>")));
             } else {
                 API.sendMessage(Loader.config.getString("info_player_death").replace("%death_message%", msg));
             }
@@ -53,7 +53,7 @@ public class PlayerListener implements Listener {
         String message = e.getMessage();
         String name = e.getPlayer().getName();
         if (Loader.config.getBoolean("spamFilter")) {
-            message = message.replace("@", "[at]").replaceAll("(?i)https:", "").replaceAll("(?i)http:", "");
+            message = message.replace("@", "[at]").replaceAll("(?i)https:", "<Redacted>").replaceAll("(?i)http:", "<Redacted>").replace("discord.gg", "<Redacted>").replace("discordapp.com", "<Redacted>");
         }
         API.sendMessage(TextFormat.clean(Loader.config.getString("minecraftToDiscordChatFormatting")).replace("%timestamp%", new Date(System.currentTimeMillis()).toString()).replace("%username%", name).replace("%displayname%", e.getPlayer().getDisplayName()).replace("%message%", message));
     }
