@@ -37,6 +37,7 @@ public class DiscordCommand {
                                 }
                                 Loader.jda.shutdownNow();
                             }
+                            Loader.instance.getConfig().reload();
                             Loader.instance.onEnable();
                             sender.sendMessage("§aDiscordChat reloaded");
                         } catch (Exception ex) {
