@@ -31,7 +31,8 @@ public class DiscordConsoleListener extends ListenerAdapter {
             if (Loader.config.getBoolean("logConsoleCommands")) {
                 Loader.instance.getLogger().info(e.getMember().getEffectiveName() + " executed a console command: " + cmd);
             }
-            Server.getInstance().getScheduler().scheduleTask(Loader.instance, () -> Server.getInstance().dispatchCommand(Loader.discordCommandSender, cmd));
+            Server.getInstance().getScheduler().scheduleTask(Loader.instance, () ->
+                    Server.getInstance().dispatchCommand(Loader.discordCommandSender, cmd));
         }
     }
 

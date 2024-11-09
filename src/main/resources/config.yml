@@ -1,5 +1,5 @@
 # config version, do not edit
-configVersion: 10
+configVersion: 11
 
 
 # bot token
@@ -74,7 +74,6 @@ logConsoleCommands: true
 # %username%
 # %displayname%
 # %discordname%
-# %timestamp%
 # %message%
 # %role%
 # TODO: PlaceholderAPI implementation
@@ -89,10 +88,14 @@ minecraftToDiscordChatFormatting: "%username% » %message%"
 maxMessageLength: 255
 # allow massages sent by a bot to show in game
 allowBotMessages: false
-# enable spam filter (beta)
-spamFilter: true
 # merge sent messages to avoid Discord chat getting delayed when lots of messages are being sent (recommended)
 queueMessages: true
+
+# anti-spam
+# replace everything matching this regex
+messageFilterRegex: (?i)discord.*?\..*?\/|http.*?\:.*?\/\/
+# replace everything matching the regex with this character
+messageFilterReplacement: "<link>"
 
 
 # translations
@@ -102,6 +105,7 @@ status_server_stopped: "**:x: Server stopped!**"
 info_player_joined: "**:heavy_plus_sign: %player% joined the server**"
 # for in-game quit message use %quit_message%
 info_player_left: "**:heavy_minus_sign: %player% left the server**"
+# for in-game death message use %death_message%
 info_player_death: "**:skull: %death_message%**"
 command_playerlist_empty: "**No online players**"
 command_playerlist_players: "Online players"

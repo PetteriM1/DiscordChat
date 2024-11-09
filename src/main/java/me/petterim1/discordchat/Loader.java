@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 
+import java.util.regex.Pattern;
+
 public class Loader extends PluginBase {
 
     static Loader instance;
@@ -22,6 +24,7 @@ public class Loader extends PluginBase {
     private static final PlayerListener playerListener = new PlayerListener();
     private static final DiscordListener discordListener = new DiscordListener();
     private static final DiscordConsoleListener discordConsoleListener = new DiscordConsoleListener();
+    static Pattern messageFilterRegex;
 
     @Override
     public void onEnable() {
@@ -33,6 +36,11 @@ public class Loader extends PluginBase {
             debug = config.getBoolean("debug");
             if (debug) {
                 getLogger().notice("Running DiscordChat in debug mode");
+            }
+            String pattern = config.getString("messageFilterRegex");
+            if (!pattern.isEmpty()) {
+                getLogger().info("DEBUG: Setting message filter to " + pattern);
+                messageFilterRegex = Pattern.compile(pattern);
             }
             if (debug) {
                 getLogger().info("DEBUG: Logging in to Discord");
@@ -126,7 +134,7 @@ public class Loader extends PluginBase {
     }
 
     private void checkAndUpdateConfig() {
-        int current = 10;
+        int current = 11;
         int ver = config.getInt("configVersion");
         if (ver != current) {
             if (debug) {
@@ -140,6 +148,12 @@ public class Loader extends PluginBase {
                 return;
             }
 
+            if (ver < 11) {
+                config.remove("spamFilter");
+                config.set("messageFilterRegex", "(?i)discord.*?\\..*?\\/|http.*?\\:.*?\\/\\/");
+                config.set("messageFilterReplacement", "<link>");
+            }
+
             if (ver < 10) {
                 config.set("logConsoleCommands", true);
             }
@@ -149,6 +163,7 @@ public class Loader extends PluginBase {
             }
 
             if (ver < 8) {
+                config.remove("roleColors");
                 config.set("command_mute_success", "§aDiscord chat muted");
                 config.set("command_mute_already_muted", "§cDiscord chat is already muted");
                 config.set("command_unmute_success", "§aDiscord chat is no longer muted");
