@@ -20,10 +20,10 @@ public class Loader extends PluginBase {
     static boolean debug;
     static boolean queueMessages;
     static MessageQueue messageQueue;
+    private static PlayerListener playerListener;
     static final DiscordCommandSender discordCommandSender = new DiscordCommandSender();
-    private static final PlayerListener playerListener = new PlayerListener();
-    private static final DiscordListener discordListener = new DiscordListener();
-    private static final DiscordConsoleListener discordConsoleListener = new DiscordConsoleListener();
+    static final DiscordListener discordListener = new DiscordListener();
+    static final DiscordConsoleListener discordConsoleListener = new DiscordConsoleListener();
     static Pattern messageFilterRegex;
 
     @Override
@@ -39,7 +39,9 @@ public class Loader extends PluginBase {
             }
             String pattern = config.getString("messageFilterRegex");
             if (!pattern.isEmpty()) {
-                getLogger().info("DEBUG: Setting message filter to " + pattern);
+                if (debug) {
+                    getLogger().info("DEBUG: Setting message filter to " + pattern);
+                }
                 messageFilterRegex = Pattern.compile(pattern);
             }
             if (debug) {
@@ -53,7 +55,9 @@ public class Loader extends PluginBase {
             if (debug) {
                 getLogger().info("DEBUG: Registering events for PlayerListener");
             }
-            getServer().getPluginManager().registerEvents(playerListener, this);
+            if (playerListener == null) {
+                getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
+            }
             channelId = config.getString("channelId", "null");
             if (debug) {
                 getLogger().info("DEBUG: Setting server channel id to " + channelId);

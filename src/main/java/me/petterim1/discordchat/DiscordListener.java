@@ -23,7 +23,7 @@ public class DiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent e) {
-        if (e.getMember() == null || Loader.jda == null || e.getAuthor().equals(Loader.jda.getSelfUser())) {
+        if (e.getMember() == null || Loader.jda == null || e.getAuthor().getIdLong() == Loader.jda.getSelfUser().getIdLong()) {
             return;
         }
         for (DiscordChatReceiver receiver : receivers) {

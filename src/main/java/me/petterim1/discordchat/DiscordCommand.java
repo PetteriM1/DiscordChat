@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.utils.TextFormat;
 
 public class DiscordCommand {
 
@@ -39,9 +40,9 @@ public class DiscordCommand {
                             }
                             Loader.instance.getConfig().reload();
                             Loader.instance.onEnable();
-                            sender.sendMessage("§aDiscordChat reloaded");
+                            sender.sendMessage(TextFormat.GREEN + "DiscordChat reloaded");
                         } catch (Exception ex) {
-                            sender.sendMessage("§cAn error occurred");
+                            sender.sendMessage(TextFormat.RED + "An error occurred");
                             Server.getInstance().getLogger().logException(ex);
                         }
                     } else {
